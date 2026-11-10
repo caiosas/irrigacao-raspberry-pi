@@ -254,6 +254,10 @@ class Irrigacao:
         if self.cfg["modo"] == "manual":
             if ligada and agora - self.bomba_desde >= self.cfg["tempo_max_manual"]:
                 self._desligar("tempo máximo do manual")
+            elif not ligada and not agua:
+                self.motivo = "sem água no reservatório"
+            elif not ligada and "sem água" in self.motivo:
+                self.motivo = "parada (água ok)"  # a água voltou
             return
 
         # modo automático
