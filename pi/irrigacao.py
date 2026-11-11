@@ -345,6 +345,12 @@ class Irrigacao:
                     continue
                 self.cfg[k] = max(lo, min(hi, v))
                 mudou = True
+        # tempos novos valem também para a contagem/rega que já está em andamento
+        agora = time.monotonic()
+        if "tempo_espera" in cmd and self.espera_ate:
+            self.espera_ate = min(self.espera_ate, agora + self.cfg["tempo_espera"])
+        if "tempo_rega" in cmd and self.rega_ate and self.bomba.value:
+            self.rega_ate = min(self.rega_ate, agora + self.cfg["tempo_rega"])
         if "boia_fechada_tem_agua" in cmd:
             self.cfg["boia_fechada_tem_agua"] = bool(cmd["boia_fechada_tem_agua"])
             mudou = True
