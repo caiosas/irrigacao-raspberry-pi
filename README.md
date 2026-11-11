@@ -86,7 +86,7 @@ flowchart LR
 {"bomba": true}                  // liga contínuo, só no manual, até tempo_max_manual; bloqueado sem água
 {"bomba": false}                 // para a bomba em qualquer modo
 {"limiar": 40}                   // % de umidade do solo para regar
-{"tempo_rega": 5, "tempo_espera": 300, "tempo_max_manual": 30}
+{"tempo_rega": 10, "tempo_espera": 30, "tempo_max_manual": 10}
 {"calibrar": "seco"}             // ou "molhado": grava a tensão atual do solo
 {"boia_fechada_tem_agua": true}  // inverte a lógica da boia
 ```
@@ -123,9 +123,9 @@ O painel *Diagnóstico* mostra a tensão do A0 em tempo real.
 | Parâmetro | Valor | Motivo |
 |---|---|---|
 | `limiar` | 40 % | terra seca lê ~10–30 %, recém-regada ~60–90 % |
-| `tempo_rega` | 5 s | a AD20P bombeia até ~4 L/min: 5 s ≈ até 300 mL por dose |
-| `tempo_espera` | 300 s | a água leva minutos para chegar até a forquilha |
-| `tempo_max_manual` | 30 s | limite de segurança do botão "Ligar bomba" no manual |
+| `tempo_rega` | 10 s | dose de rega do automático (a AD20P bombeia até ~4 L/min: ≈ até 650 mL) |
+| `tempo_espera` | 30 s | pausa para a água infiltrar antes de medir de novo |
+| `tempo_max_manual` | 10 s | o botão "Ligar bomba" no manual também rega 10 s e desliga sozinho |
 
 Para mudar um valor: `mosquitto_pub -h localhost -t irrigacao/cmd -m '{"limiar": 45}'`.
 

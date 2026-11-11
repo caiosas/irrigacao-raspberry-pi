@@ -100,7 +100,8 @@ AJUDA = """
   <ol style="margin:0 0 8px 0;padding-left:18px">
     <li>Quando a umidade do solo fica <b>abaixo de {{msg.payload.limiar}} %</b>,
         a bomba <b>rega por {{msg.payload.tempo_rega}} s</b>.</li>
-    <li>Depois, o sistema <b>espera {{msg.payload.tempo_espera / 60 | number:0}} min</b>
+    <li>Depois, o sistema <b>espera {{msg.payload.tempo_espera < 60 ? msg.payload.tempo_espera + ' s'
+        : (msg.payload.tempo_espera / 60 | number:0) + ' min'}}</b>
         para a água descer pela terra até a forquilha.
         Em <i>Situação</i> aparece <b>"aguardando infiltração"</b> com a contagem.</li>
     <li>Ao fim da espera, mede de novo: se ainda estiver seco, rega mais uma dose;
@@ -111,7 +112,8 @@ AJUDA = """
     parece seco para o sensor. Sem a pausa, o sistema regaria várias vezes seguidas e
     encharcaria o vaso.<br>
     Durante a contagem a bomba não liga no automático. Para ligar na hora,
-    desligue o <b>Modo automático</b> e use <b>Ligar bomba</b>.
+    desligue o <b>Modo automático</b> e use <b>Ligar bomba</b>
+    (rega {{msg.payload.tempo_max_manual}} s e desliga sozinha).
     A bomba nunca liga com o reservatório vazio.
   </div>
 </div>
@@ -186,10 +188,11 @@ out[6] = { payload: d.motivo };
 
 const c = d.cfg || {};
 seMudou(7, 'modo', c.modo);
-const ajuda = `${c.limiar}|${c.tempo_rega}|${c.tempo_espera}`;
+const ajuda = `${c.limiar}|${c.tempo_rega}|${c.tempo_espera}|${c.tempo_max_manual}`;
 if (ult.ajuda !== ajuda) {
     ult.ajuda = ajuda;
-    out[10] = { payload: { limiar: c.limiar, tempo_rega: c.tempo_rega, tempo_espera: c.tempo_espera } };
+    out[10] = { payload: { limiar: c.limiar, tempo_rega: c.tempo_rega, tempo_espera: c.tempo_espera,
+                           tempo_max_manual: c.tempo_max_manual } };
 }
 
 const e = d.erros || {};

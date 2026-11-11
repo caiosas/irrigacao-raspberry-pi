@@ -58,9 +58,9 @@ TOPIC_CMD = "irrigacao/cmd"
 DEFAULT_CONFIG = {
     "modo": "manual",
     "limiar": 40,            # % — terra seca lê ~10–30 %, recém-regada ~60–90 %
-    "tempo_rega": 5,         # s — AD20P ~4 L/min: 5 s ≈ até 300 mL por dose
-    "tempo_espera": 300,     # s — tempo para a água chegar até a forquilha
-    "tempo_max_manual": 30,  # s — limite de segurança do liga contínuo
+    "tempo_rega": 10,        # s — AD20P ~4 L/min: 10 s ≈ até 650 mL por dose
+    "tempo_espera": 30,      # s — pausa para a água infiltrar antes de medir de novo
+    "tempo_max_manual": 10,  # s — "Ligar bomba" no manual também rega 10 s
     "solo_seco_v": 3.292,    # calibrado: forquilha seca no ar
     "solo_molhado_v": 1.468, # calibrado: forquilha na água
     "boia_fechada_tem_agua": True,
