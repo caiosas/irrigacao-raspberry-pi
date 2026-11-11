@@ -11,6 +11,8 @@ import os
 import re
 import sys
 import time
+import urllib.error
+import urllib.parse
 import urllib.request
 
 API = "http://localhost:1880"
@@ -18,15 +20,37 @@ PREFIXO = "a1a1"
 BASE = os.path.dirname(os.path.abspath(__file__))
 
 
+AUTH = {}
+
+
 def req(metodo, caminho, corpo=None, cab=None):
     dados = json.dumps(corpo).encode() if corpo is not None else None
     r = urllib.request.Request(API + caminho, data=dados, method=metodo, headers={
-        "Content-Type": "application/json", "Node-RED-API-Version": "v2", **(cab or {})})
+        "Content-Type": "application/json", "Node-RED-API-Version": "v2", **AUTH, **(cab or {})})
     with urllib.request.urlopen(r, timeout=30) as resp:
         txt = resp.read().decode()
         return json.loads(txt) if txt else None
 
 
+def autenticar():
+    """Com senha no editor (node_red_senha.py), a Admin API pede um token.
+    Usuário/senha vêm de NODERED_USER/NODERED_PASS ou são perguntados."""
+    if (req("GET", "/auth/login") or {}).get("type") != "credentials":
+        return  # editor sem senha
+    import getpass
+    usuario = os.environ.get("NODERED_USER") or input("Usuário do editor do Node-RED [admin]: ") or "admin"
+    senha = os.environ.get("NODERED_PASS") or getpass.getpass("Senha do editor: ")
+    corpo = urllib.parse.urlencode({"client_id": "node-red-admin", "grant_type": "password",
+                                    "scope": "*", "username": usuario, "password": senha}).encode()
+    try:
+        with urllib.request.urlopen(urllib.request.Request(API + "/auth/token", data=corpo),
+                                    timeout=30) as resp:
+            AUTH["Authorization"] = "Bearer " + json.loads(resp.read())["access_token"]
+    except urllib.error.HTTPError as e:
+        sys.exit(f"login no Node-RED falhou (HTTP {e.code}): usuário ou senha errados")
+
+
+autenticar()
 atual = req("GET", "/flows")
 flows = atual["flows"]
 bkp = os.path.join(BASE, time.strftime("backup_flows_%Y%m%d_%H%M%S.json"))
