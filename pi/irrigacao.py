@@ -47,6 +47,8 @@ I2C_BUS = 1
 T_ESTADO = 2.0  # s entre publicações
 T_DHT = 5.0     # s entre leituras do DHT22 (mínimo 2 s)
 DHT_TOLERANCIA = 30  # s sem leitura boa antes de mostrar erro
+BOIA_FILTRO = 3.0    # s que a boia precisa ficar estável para mudar de estado
+T_CONTROLE = 0.5     # s entre verificações da boia/bomba
 
 TOPIC_ESTADO = "irrigacao/estado"
 TOPIC_CMD = "irrigacao/cmd"
@@ -149,6 +151,8 @@ class Irrigacao:
             log.error("ADS1115: %s", e)
             self.ads = None
         self.dht = DHT22Kernel()
+        self._agua_estavel = self._agua_ult_bruta = self.agua_bruta()
+        self._agua_t_mudou = time.monotonic()
 
         self.solo_v = None
         self.temp = None
@@ -170,9 +174,25 @@ class Irrigacao:
         self.mqtt.will_set(TOPIC_ESTADO, json.dumps({"online": False}), retain=True)
 
     # ------------------------------------------------ leituras
-    def tem_agua(self):
+    def agua_bruta(self):
         fechado = self.boia.is_pressed  # contato fechado puxa o GPIO a 0
         return fechado if self.cfg["boia_fechada_tem_agua"] else not fechado
+
+    def tem_agua(self):
+        """Estado da boia filtrado: só muda se a leitura ficar estável BOIA_FILTRO s.
+
+        A água agitada pela bomba (ou ruído da partida do motor) faz a boia
+        oscilar por instantes; sem o filtro a trava cortava a bomba na partida.
+        """
+        agora = time.monotonic()
+        bruta = self.agua_bruta()
+        if bruta != self._agua_ult_bruta:
+            self._agua_ult_bruta = bruta
+            self._agua_t_mudou = agora
+        if bruta != self._agua_estavel and agora - self._agua_t_mudou >= BOIA_FILTRO:
+            self._agua_estavel = bruta
+            log.info("boia: %s", "com água" if bruta else "SEM ÁGUA")
+        return self._agua_estavel
 
     def solo_pct(self):
         if self.solo_v is None:
@@ -376,6 +396,7 @@ class Irrigacao:
         self.mqtt.connect_async("localhost", 1883, keepalive=30)
         self.mqtt.loop_start()
         threading.Thread(target=self.laco_dht, args=(parar,), daemon=True).start()
+        threading.Thread(target=self.laco_controle, args=(parar,), daemon=True).start()
         try:
             while not parar.is_set():
                 self.ler_sensores()
@@ -389,6 +410,18 @@ class Irrigacao:
             self.mqtt.loop_stop()
             self.mqtt.disconnect()
             log.info("encerrado, bomba desligada")
+
+    def laco_controle(self, parar):
+        """Reavalia boia/bomba a cada T_CONTROLE s (o filtro da boia depende disso)
+        e publica na hora quando a bomba ou a água mudam de estado."""
+        while not parar.is_set():
+            with self.lock:
+                antes = (bool(self.bomba.value), self._agua_estavel)
+                self.controlar()
+                depois = (bool(self.bomba.value), self._agua_estavel)
+            if antes != depois:
+                self.publicar()
+            parar.wait(T_CONTROLE)
 
     def _boia_mudou(self):
         with self.lock:
