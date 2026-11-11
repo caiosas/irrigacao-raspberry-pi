@@ -40,6 +40,8 @@ O esquema completo está em [`sch.jpeg`](sch.jpeg). Ele usa duas fontes (USB-C d
 | Boia (contato seco) | 11 (GPIO17) | pull-up interno; contato fechado = 0 |
 | Bomba 12 V via TIP122 | 13 (GPIO27) | R1 = 330 Ω na base, R2 = 10 kΩ base→GND, diodo 1N5822 em paralelo com a bomba |
 
+A bomba é uma **AD20P brushless submersível**. Ela tem polaridade (vermelho no +12 V, preto no coletor do TIP122) e **não pode rodar a seco**. O negativo da fonte de 12 V vai direto ao emissor do TIP122, e desse mesmo ponto sai um fio fino até o GND da Pi. Assim a corrente da bomba não passa pelo GND dos sensores.
+
 Os pinos físicos 2 e 4 (5 V) **ficam livres**.
 
 ## Arquitetura
@@ -80,9 +82,11 @@ flowchart LR
 
 ```jsonc
 {"modo": "auto"}                 // ou "manual"
-{"bomba": true}                  // só no manual; bloqueado sem água
-{"limiar": 35}                   // % de umidade do solo para regar
-{"tempo_rega": 10, "tempo_espera": 60, "tempo_max_manual": 60}
+{"regar": true}                  // uma dose de tempo_rega s, em qualquer modo; bloqueado sem água
+{"bomba": true}                  // liga contínuo, só no manual, até tempo_max_manual; bloqueado sem água
+{"bomba": false}                 // para a bomba em qualquer modo
+{"limiar": 40}                   // % de umidade do solo para regar
+{"tempo_rega": 5, "tempo_espera": 300, "tempo_max_manual": 30}
 {"calibrar": "seco"}             // ou "molhado": grava a tensão atual do solo
 {"boia_fechada_tem_agua": true}  // inverte a lógica da boia
 ```
@@ -173,13 +177,7 @@ pinctrl get 4,17,27                  # estado dos pinos
 
 - **Nenhum sensor respondia:** o 3,3 V e/ou o GND não chegavam à placa. Pistas usadas: `i2cdetect` vazio, DHT22 com *timeout*, GPIO4 em 0 mesmo com o pull-up externo e a boia sempre em 1.
 - **A0 fixo em 0,004 V** enquanto A1–A3 (soltos) davam ~0,91 V: o fio do AO estava ligado, mas a plaquinha do solo estava sem alimentação.
+- **A0 travado em ~3,29 V** com a forquilha seca ou na água: havia uma trilha ligando um polo da forquilha ao VCC, o que prendia o AO no 3,3 V. A forquilha deve ir **só** aos 2 pinos de entrada da plaquinha. Depois de corrigir, a leitura passou a 1,47 V na água.
 - **DHT22 com erro intermitente:** na Pi 4, o driver do kernel falha em ~50 % das leituras, porque interrupções atrapalham a temporização de microssegundos. As leituras que passam são válidas (o checksum é conferido). O serviço respeita ≥ 2 s entre tentativas e só reporta erro após 30 s sem nenhuma leitura boa.
 - **A bomba era cortada na partida:** a boia oscilava por frações de segundo logo que o motor ligava (flutuador balançando com a água agitada e/ou ruído da partida). Resolvido com o filtro de 3 s. Se ainda houver ruído, dá para pôr um capacitor de 100 nF entre o GPIO17 e o GND e afastar o fio da boia dos fios da bomba.
 - Boia e forquilha **não têm polaridade**. A plaquinha do solo, o DHT22 e o ADS1115 **têm** (VCC/GND).
-
-## Pendências
-
-- [ ] Calibração "molhado" da sonda de solo
-- [ ] Confirmar a lógica da boia (contato fechado = reservatório cheio?)
-- [ ] Teste da bomba com 12 V (com o diodo 1N5822 instalado e a bomba submersa)
-- [ ] Medir a corrente de partida da bomba. Se passar de ~2 A, rever R1 ou trocar o TIP122 por um MOSFET logic-level
