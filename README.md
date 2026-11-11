@@ -12,7 +12,16 @@ Sistema de irrigação para a disciplina de microcontroladores. A Raspberry Pi 4
 | **Dashboard** | http://10.33.133.22:1880/ui |
 | **Editor do Node-RED** | http://10.33.133.22:1880 |
 
-> O IP **10.33.133.22** é da rede Wi-Fi da Mauá (DHCP) e pode mudar.
+### Rede Wi-Fi
+
+A Pi e o computador ou celular que acessa o dashboard precisam estar na **mesma rede**:
+
+| | |
+|---|---|
+| **Rede (SSID)** | `CP-DET` |
+| **Senha** | `Ywp2ENp5vlmgZXBLMX44` |
+
+> O IP **10.33.133.22** é atribuído por DHCP e pode mudar.
 > Se não responder, tente `raspberrypi.local`. Também dá para procurar a Pi na rede com
 > `nmap -sn 10.33.133.0/24` e ver os MACs que começam com `2c:cf:67` (Raspberry Pi).
 > O acesso é por chave SSH. O `sudo` pede senha, exceto para reiniciar os serviços do projeto (veja [Operação](#operação)).
