@@ -11,7 +11,9 @@ MQTT (broker local):
   irrigacao/estado  (retido)  JSON com todas as leituras e o estado
   irrigacao/cmd               JSON com comandos, por exemplo:
       {"modo": "auto" | "manual"}
-      {"bomba": true | false}            (só no modo manual)
+      {"regar": true}                    (uma dose de tempo_rega s, qualquer modo)
+      {"bomba": false}                   (para a bomba, qualquer modo)
+      {"bomba": true}                    (liga contínuo, só no manual, até tempo_max_manual)
       {"limiar": 35}                     (% de umidade para regar no auto)
       {"tempo_rega": 10, "tempo_espera": 60, "tempo_max_manual": 60}
       {"calibrar": "seco" | "molhado"}   (grava a leitura atual do solo)
@@ -55,12 +57,12 @@ TOPIC_CMD = "irrigacao/cmd"
 
 DEFAULT_CONFIG = {
     "modo": "manual",
-    "limiar": 35,
-    "tempo_rega": 10,
-    "tempo_espera": 60,
-    "tempo_max_manual": 60,
-    "solo_seco_v": 3.0,
-    "solo_molhado_v": 1.2,
+    "limiar": 40,            # % — terra seca lê ~10–30 %, recém-regada ~60–90 %
+    "tempo_rega": 5,         # s — AD20P ~4 L/min: 5 s ≈ até 300 mL por dose
+    "tempo_espera": 300,     # s — tempo para a água chegar até a forquilha
+    "tempo_max_manual": 30,  # s — limite de segurança do liga contínuo
+    "solo_seco_v": 3.292,    # calibrado: forquilha seca no ar
+    "solo_molhado_v": 1.468, # calibrado: forquilha na água
     "boia_fechada_tem_agua": True,
 }
 
@@ -272,7 +274,10 @@ class Irrigacao:
             return
 
         if self.cfg["modo"] == "manual":
-            if ligada and agora - self.bomba_desde >= self.cfg["tempo_max_manual"]:
+            if ligada and self.rega_ate and agora >= self.rega_ate:
+                self._desligar("rega concluída")
+                self.rega_ate = 0
+            elif ligada and agora - self.bomba_desde >= self.cfg["tempo_max_manual"]:
                 self._desligar("tempo máximo do manual")
             elif not ligada and not agua:
                 self.motivo = "sem água no reservatório"
@@ -346,16 +351,27 @@ class Irrigacao:
         if cmd.get("calibrar") in ("seco", "molhado") and self.solo_v is not None:
             self.cfg[f"solo_{cmd['calibrar']}_v"] = round(self.solo_v, 3)
             mudou = True
-        if "bomba" in cmd:
-            if self.cfg["modo"] != "manual":
-                log.info("comando de bomba ignorado: modo automático")
-            elif cmd["bomba"]:
-                if self.tem_agua():
-                    self._ligar("manual")
-                else:
-                    self.motivo = "manual: sem água, bomba bloqueada"
+        if cmd.get("regar"):
+            # uma dose de rega (tempo_rega s) em qualquer modo, respeitando a boia
+            if self.tem_agua():
+                self.rega_ate = time.monotonic() + self.cfg["tempo_rega"]
+                self._ligar("regando (pedido manual)")
             else:
-                self._desligar("manual")
+                self.motivo = "sem água no reservatório, rega bloqueada"
+        if "bomba" in cmd:
+            if not cmd["bomba"]:
+                # parar é sempre permitido; no auto, respeita a espera antes de regar de novo
+                self._desligar("parada pelo usuário")
+                self.rega_ate = 0
+                if self.cfg["modo"] == "auto":
+                    self.espera_ate = time.monotonic() + self.cfg["tempo_espera"]
+            elif self.cfg["modo"] != "manual":
+                self.motivo = "no automático, use 'Regar agora'"
+            elif self.tem_agua():
+                self.rega_ate = 0  # liga contínuo, limitado por tempo_max_manual
+                self._ligar("manual")
+            else:
+                self.motivo = "sem água no reservatório, bomba bloqueada"
         if mudou:
             salvar_config(self.cfg)
 

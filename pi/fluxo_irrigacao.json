@@ -68,7 +68,7 @@
   {
     "id": "a1a1000000000007",
     "type": "ui_group",
-    "name": "Configuração",
+    "name": "Diagnóstico",
     "tab": "a1a1000000000003",
     "order": 4,
     "disp": true,
@@ -78,17 +78,6 @@
   },
   {
     "id": "a1a1000000000008",
-    "type": "ui_group",
-    "name": "Diagnóstico",
-    "tab": "a1a1000000000003",
-    "order": 5,
-    "disp": true,
-    "width": "6",
-    "collapse": false,
-    "className": ""
-  },
-  {
-    "id": "a1a1000000000009",
     "type": "mqtt out",
     "name": "irrigacao/cmd",
     "topic": "irrigacao/cmd",
@@ -101,7 +90,7 @@
     "wires": []
   },
   {
-    "id": "a1a100000000000a",
+    "id": "a1a1000000000009",
     "type": "ui_gauge",
     "group": "a1a1000000000004",
     "order": 1,
@@ -127,7 +116,7 @@
     "y": 40
   },
   {
-    "id": "a1a100000000000b",
+    "id": "a1a100000000000a",
     "type": "ui_gauge",
     "group": "a1a1000000000004",
     "order": 2,
@@ -153,7 +142,7 @@
     "y": 80
   },
   {
-    "id": "a1a100000000000c",
+    "id": "a1a100000000000b",
     "type": "ui_gauge",
     "group": "a1a1000000000004",
     "order": 3,
@@ -179,7 +168,7 @@
     "y": 120
   },
   {
-    "id": "a1a100000000000d",
+    "id": "a1a100000000000c",
     "type": "ui_chart",
     "group": "a1a1000000000006",
     "order": 1,
@@ -223,7 +212,7 @@
     ]
   },
   {
-    "id": "a1a100000000000e",
+    "id": "a1a100000000000d",
     "type": "ui_text",
     "group": "a1a1000000000005",
     "order": 1,
@@ -243,7 +232,7 @@
     "y": 200
   },
   {
-    "id": "a1a100000000000f",
+    "id": "a1a100000000000e",
     "type": "ui_text",
     "group": "a1a1000000000005",
     "order": 2,
@@ -263,7 +252,7 @@
     "y": 240
   },
   {
-    "id": "a1a1000000000010",
+    "id": "a1a100000000000f",
     "type": "ui_text",
     "group": "a1a1000000000005",
     "order": 3,
@@ -283,9 +272,9 @@
     "y": 280
   },
   {
-    "id": "a1a1000000000011",
+    "id": "a1a1000000000010",
     "type": "ui_text",
-    "group": "a1a1000000000008",
+    "group": "a1a1000000000007",
     "order": 1,
     "width": 6,
     "height": 1,
@@ -303,9 +292,9 @@
     "y": 320
   },
   {
-    "id": "a1a1000000000012",
+    "id": "a1a1000000000011",
     "type": "ui_template",
-    "group": "a1a1000000000008",
+    "group": "a1a1000000000007",
     "name": "Detalhes",
     "order": 2,
     "width": 6,
@@ -324,7 +313,7 @@
     ]
   },
   {
-    "id": "a1a1000000000013",
+    "id": "a1a1000000000012",
     "type": "function",
     "name": "cmd modo",
     "func": "msg.payload = { \"modo\": msg.payload };\nreturn msg;",
@@ -334,12 +323,12 @@
     "y": 420,
     "wires": [
       [
-        "a1a1000000000009"
+        "a1a1000000000008"
       ]
     ]
   },
   {
-    "id": "a1a1000000000014",
+    "id": "a1a1000000000013",
     "type": "ui_switch",
     "name": "Modo",
     "label": "Modo automático",
@@ -368,12 +357,12 @@
     "y": 420,
     "wires": [
       [
-        "a1a1000000000013"
+        "a1a1000000000012"
       ]
     ]
   },
   {
-    "id": "a1a1000000000015",
+    "id": "a1a1000000000014",
     "type": "ui_button",
     "name": "Ligar bomba",
     "group": "a1a1000000000005",
@@ -396,12 +385,12 @@
     "y": 460,
     "wires": [
       [
-        "a1a1000000000009"
+        "a1a1000000000008"
       ]
     ]
   },
   {
-    "id": "a1a1000000000016",
+    "id": "a1a1000000000015",
     "type": "ui_button",
     "name": "Desligar bomba",
     "group": "a1a1000000000005",
@@ -424,292 +413,16 @@
     "y": 500,
     "wires": [
       [
-        "a1a1000000000009"
+        "a1a1000000000008"
       ]
     ]
   },
   {
-    "id": "a1a1000000000017",
-    "type": "function",
-    "name": "cmd limiar",
-    "func": "msg.payload = { \"limiar\": msg.payload };\nreturn msg;",
-    "outputs": 1,
-    "z": "a1a1000000000001",
-    "x": 960,
-    "y": 540,
-    "wires": [
-      [
-        "a1a1000000000009"
-      ]
-    ]
-  },
-  {
-    "id": "a1a1000000000018",
-    "type": "ui_slider",
-    "name": "Limiar",
-    "label": "Regar abaixo de (%)",
-    "tooltip": "",
-    "group": "a1a1000000000007",
-    "order": 1,
-    "width": 6,
-    "height": 1,
-    "passthru": false,
-    "outs": "end",
-    "topic": "limiar",
-    "topicType": "str",
-    "min": "5",
-    "max": "90",
-    "step": "1",
-    "className": "",
-    "z": "a1a1000000000001",
-    "x": 760,
-    "y": 540,
-    "wires": [
-      [
-        "a1a1000000000017"
-      ]
-    ]
-  },
-  {
-    "id": "a1a1000000000019",
-    "type": "function",
-    "name": "cmd tempo_rega",
-    "func": "msg.payload = { \"tempo_rega\": msg.payload };\nreturn msg;",
-    "outputs": 1,
-    "z": "a1a1000000000001",
-    "x": 960,
-    "y": 580,
-    "wires": [
-      [
-        "a1a1000000000009"
-      ]
-    ]
-  },
-  {
-    "id": "a1a100000000001a",
-    "type": "ui_numeric",
-    "name": "Tempo de rega (s)",
-    "label": "Tempo de rega (s)",
-    "tooltip": "",
-    "group": "a1a1000000000007",
-    "order": 2,
-    "width": 6,
-    "height": 1,
-    "wrap": false,
-    "passthru": false,
-    "topic": "tempo_rega",
-    "topicType": "str",
-    "format": "{{value}}",
-    "min": 5,
-    "max": 300,
-    "step": 5,
-    "className": "",
-    "z": "a1a1000000000001",
-    "x": 760,
-    "y": 580,
-    "wires": [
-      [
-        "a1a1000000000019"
-      ]
-    ]
-  },
-  {
-    "id": "a1a100000000001b",
-    "type": "function",
-    "name": "cmd tempo_espera",
-    "func": "msg.payload = { \"tempo_espera\": msg.payload };\nreturn msg;",
-    "outputs": 1,
-    "z": "a1a1000000000001",
-    "x": 960,
-    "y": 620,
-    "wires": [
-      [
-        "a1a1000000000009"
-      ]
-    ]
-  },
-  {
-    "id": "a1a100000000001c",
-    "type": "ui_numeric",
-    "name": "Espera p/ infiltrar (s)",
-    "label": "Espera p/ infiltrar (s)",
-    "tooltip": "",
-    "group": "a1a1000000000007",
-    "order": 3,
-    "width": 6,
-    "height": 1,
-    "wrap": false,
-    "passthru": false,
-    "topic": "tempo_espera",
-    "topicType": "str",
-    "format": "{{value}}",
-    "min": 0,
-    "max": 1800,
-    "step": 5,
-    "className": "",
-    "z": "a1a1000000000001",
-    "x": 760,
-    "y": 620,
-    "wires": [
-      [
-        "a1a100000000001b"
-      ]
-    ]
-  },
-  {
-    "id": "a1a100000000001d",
-    "type": "function",
-    "name": "cmd tempo_max_manual",
-    "func": "msg.payload = { \"tempo_max_manual\": msg.payload };\nreturn msg;",
-    "outputs": 1,
-    "z": "a1a1000000000001",
-    "x": 960,
-    "y": 660,
-    "wires": [
-      [
-        "a1a1000000000009"
-      ]
-    ]
-  },
-  {
-    "id": "a1a100000000001e",
-    "type": "ui_numeric",
-    "name": "Máx. manual (s)",
-    "label": "Máx. manual (s)",
-    "tooltip": "",
-    "group": "a1a1000000000007",
-    "order": 4,
-    "width": 6,
-    "height": 1,
-    "wrap": false,
-    "passthru": false,
-    "topic": "tempo_max_manual",
-    "topicType": "str",
-    "format": "{{value}}",
-    "min": 5,
-    "max": 600,
-    "step": 5,
-    "className": "",
-    "z": "a1a1000000000001",
-    "x": 760,
-    "y": 660,
-    "wires": [
-      [
-        "a1a100000000001d"
-      ]
-    ]
-  },
-  {
-    "id": "a1a100000000001f",
-    "type": "function",
-    "name": "cmd boia_fechada_tem_agua",
-    "func": "msg.payload = { \"boia_fechada_tem_agua\": msg.payload };\nreturn msg;",
-    "outputs": 1,
-    "z": "a1a1000000000001",
-    "x": 960,
-    "y": 700,
-    "wires": [
-      [
-        "a1a1000000000009"
-      ]
-    ]
-  },
-  {
-    "id": "a1a1000000000020",
-    "type": "ui_switch",
-    "name": "Lógica da boia",
-    "label": "Contato fechado = tem água",
-    "tooltip": "Inverta se o reservatório aparecer vazio com água",
-    "group": "a1a1000000000007",
-    "order": 5,
-    "width": 6,
-    "height": 1,
-    "passthru": false,
-    "decouple": "true",
-    "topic": "boia",
-    "topicType": "str",
-    "style": "",
-    "onvalue": "true",
-    "onvalueType": "bool",
-    "onicon": "",
-    "oncolor": "",
-    "offvalue": "false",
-    "offvalueType": "bool",
-    "officon": "",
-    "offcolor": "",
-    "animate": true,
-    "className": "",
-    "z": "a1a1000000000001",
-    "x": 760,
-    "y": 700,
-    "wires": [
-      [
-        "a1a100000000001f"
-      ]
-    ]
-  },
-  {
-    "id": "a1a1000000000021",
-    "type": "ui_button",
-    "name": "Calibrar: SECO",
-    "group": "a1a1000000000007",
-    "order": 6,
-    "width": 3,
-    "height": 1,
-    "passthru": false,
-    "label": "Calibrar: SECO",
-    "tooltip": "",
-    "color": "",
-    "bgcolor": "#8d6e63",
-    "className": "",
-    "icon": "",
-    "payload": "{\"calibrar\": \"seco\"}",
-    "payloadType": "json",
-    "topic": "",
-    "topicType": "str",
-    "z": "a1a1000000000001",
-    "x": 760,
-    "y": 740,
-    "wires": [
-      [
-        "a1a1000000000009"
-      ]
-    ]
-  },
-  {
-    "id": "a1a1000000000022",
-    "type": "ui_button",
-    "name": "Calibrar: MOLHADO",
-    "group": "a1a1000000000007",
-    "order": 7,
-    "width": 3,
-    "height": 1,
-    "passthru": false,
-    "label": "Calibrar: MOLHADO",
-    "tooltip": "",
-    "color": "",
-    "bgcolor": "#1565c0",
-    "className": "",
-    "icon": "",
-    "payload": "{\"calibrar\": \"molhado\"}",
-    "payloadType": "json",
-    "topic": "",
-    "topicType": "str",
-    "z": "a1a1000000000001",
-    "x": 760,
-    "y": 780,
-    "wires": [
-      [
-        "a1a1000000000009"
-      ]
-    ]
-  },
-  {
-    "id": "a1a1000000000023",
+    "id": "a1a1000000000016",
     "type": "function",
     "name": "Distribui estado",
-    "func": "const d = msg.payload;\nconst out = new Array(15).fill(null);\nconst ult = context.get('ult') || {};\n// envia só quando muda (evita brigar com o usuário mexendo no controle)\nfunction seMudou(i, chave, valor) {\n    if (ult[chave] !== valor) { ult[chave] = valor; out[i] = { payload: valor }; }\n}\n\nif (!d || d.online === false) {\n    out[14] = { payload: '🔴 OFFLINE (serviço parado)' };\n    node.status({ fill: 'red', shape: 'ring', text: 'offline' });\n    context.set('ult', ult);\n    return out;\n}\nconst fmt = (v, u) => (v === null || v === undefined) ? '—' : v.toFixed(1) + u;\n\nif (d.solo_pct !== null) out[0] = { payload: d.solo_pct };\nif (d.temp !== null) out[1] = { payload: d.temp };\nif (d.umid_ar !== null) out[2] = { payload: d.umid_ar };\n\nconst pontos = [];\nif (d.solo_pct !== null) pontos.push({ topic: 'Solo (%)', payload: d.solo_pct });\nif (d.umid_ar !== null) pontos.push({ topic: 'Umid. ar (%)', payload: d.umid_ar });\nif (d.temp !== null) pontos.push({ topic: 'Temp. (°C)', payload: d.temp });\npontos.push({ topic: 'Bomba (on=100)', payload: d.bomba ? 100 : 0 });\nout[3] = pontos;\n\nout[4] = { payload: d.tem_agua ? '💧 Com água' : '⚠️ VAZIO' };\nout[5] = { payload: d.bomba ? `🟢 LIGADA (${d.bomba_seg} s)` : '⚪ Desligada' };\nout[6] = { payload: d.motivo };\n\nconst c = d.cfg || {};\nseMudou(7, 'modo', c.modo);\nseMudou(8, 'limiar', c.limiar);\nseMudou(9, 'tempo_rega', c.tempo_rega);\nseMudou(10, 'tempo_espera', c.tempo_espera);\nseMudou(11, 'tempo_max_manual', c.tempo_max_manual);\nseMudou(12, 'boia', c.boia_fechada_tem_agua);\n\nconst e = d.erros || {};\nout[13] = { payload: [\n    ['Tensão do solo (A0)', d.solo_v === null ? '—' : d.solo_v.toFixed(3) + ' V'],\n    ['Calibração', `seco ${c.solo_seco_v} V · molhado ${c.solo_molhado_v} V`],\n    ['Contato da boia', d.boia_fechada ? 'fechado' : 'aberto'],\n    ['Temp / umid. ar', `${fmt(d.temp, ' °C')} / ${fmt(d.umid_ar, ' %')}`],\n    ['ADS1115', e.ads ? 'ERRO: ' + e.ads : 'ok', !!e.ads],\n    ['DHT22', e.dht ? 'ERRO: ' + e.dht\n        : `ok · última leitura há ${d.dht_idade ?? '—'} s · ${d.dht_taxa}% das tentativas`, !!e.dht],\n    ['Atualizado', new Date(d.ts).toLocaleTimeString('pt-BR')],\n]};\nout[14] = { payload: '🟢 online' };\nnode.status({ fill: d.bomba ? 'green' : 'grey', shape: 'dot',\n              text: `solo ${fmt(d.solo_pct, '%')} · bomba ${d.bomba ? 'ON' : 'off'}` });\ncontext.set('ult', ult);\nreturn out;",
-    "outputs": 15,
+    "func": "const d = msg.payload;\nconst out = new Array(10).fill(null);\nconst ult = context.get('ult') || {};\n// envia só quando muda (evita brigar com o usuário mexendo no controle)\nfunction seMudou(i, chave, valor) {\n    if (ult[chave] !== valor) { ult[chave] = valor; out[i] = { payload: valor }; }\n}\n\nif (!d || d.online === false) {\n    out[9] = { payload: '🔴 OFFLINE (serviço parado)' };\n    node.status({ fill: 'red', shape: 'ring', text: 'offline' });\n    context.set('ult', ult);\n    return out;\n}\nconst fmt = (v, u) => (v === null || v === undefined) ? '—' : v.toFixed(1) + u;\n\nif (d.solo_pct !== null) out[0] = { payload: d.solo_pct };\nif (d.temp !== null) out[1] = { payload: d.temp };\nif (d.umid_ar !== null) out[2] = { payload: d.umid_ar };\n\nconst pontos = [];\nif (d.solo_pct !== null) pontos.push({ topic: 'Solo (%)', payload: d.solo_pct });\nif (d.umid_ar !== null) pontos.push({ topic: 'Umid. ar (%)', payload: d.umid_ar });\nif (d.temp !== null) pontos.push({ topic: 'Temp. (°C)', payload: d.temp });\npontos.push({ topic: 'Bomba (on=100)', payload: d.bomba ? 100 : 0 });\nout[3] = pontos;\n\nout[4] = { payload: d.tem_agua ? '💧 Com água' : '⚠️ VAZIO' };\nout[5] = { payload: d.bomba ? `🟢 LIGADA (${d.bomba_seg} s)` : '⚪ Desligada' };\nout[6] = { payload: d.motivo };\n\nconst c = d.cfg || {};\nseMudou(7, 'modo', c.modo);\n\nconst e = d.erros || {};\nout[8] = { payload: [\n    ['Tensão do solo (A0)', d.solo_v === null ? '—' : d.solo_v.toFixed(3) + ' V'],\n    ['Calibração', `seco ${c.solo_seco_v} V · molhado ${c.solo_molhado_v} V`],\n    ['Contato da boia', d.boia_fechada ? 'fechado' : 'aberto'],\n    ['Temp / umid. ar', `${fmt(d.temp, ' °C')} / ${fmt(d.umid_ar, ' %')}`],\n    ['ADS1115', e.ads ? 'ERRO: ' + e.ads : 'ok', !!e.ads],\n    ['DHT22', e.dht ? 'ERRO: ' + e.dht\n        : `ok · última leitura há ${d.dht_idade ?? '—'} s · ${d.dht_taxa}% das tentativas`, !!e.dht],\n    ['Atualizado', new Date(d.ts).toLocaleTimeString('pt-BR')],\n]};\nout[9] = { payload: '🟢 online' };\nnode.status({ fill: d.bomba ? 'green' : 'grey', shape: 'dot',\n              text: `solo ${fmt(d.solo_pct, '%')} · bomba ${d.bomba ? 'ON' : 'off'}` });\ncontext.set('ult', ult);\nreturn out;",
+    "outputs": 10,
     "timeout": 0,
     "noerr": 0,
     "initialize": "",
@@ -719,6 +432,9 @@
     "x": 470,
     "y": 300,
     "wires": [
+      [
+        "a1a1000000000009"
+      ],
       [
         "a1a100000000000a"
       ],
@@ -738,36 +454,18 @@
         "a1a100000000000f"
       ],
       [
-        "a1a1000000000010"
-      ],
-      [
-        "a1a1000000000014"
-      ],
-      [
-        "a1a1000000000018"
-      ],
-      [
-        "a1a100000000001a"
-      ],
-      [
-        "a1a100000000001c"
-      ],
-      [
-        "a1a100000000001e"
-      ],
-      [
-        "a1a1000000000020"
-      ],
-      [
-        "a1a1000000000012"
+        "a1a1000000000013"
       ],
       [
         "a1a1000000000011"
+      ],
+      [
+        "a1a1000000000010"
       ]
     ]
   },
   {
-    "id": "a1a1000000000024",
+    "id": "a1a1000000000017",
     "type": "mqtt in",
     "name": "irrigacao/estado",
     "topic": "irrigacao/estado",
@@ -783,7 +481,7 @@
     "y": 300,
     "wires": [
       [
-        "a1a1000000000023"
+        "a1a1000000000016"
       ]
     ]
   }

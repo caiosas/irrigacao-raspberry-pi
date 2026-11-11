@@ -91,10 +91,30 @@ A configuração fica salva em `~/irrigacao/config.json` (modelo em [`pi/config.
 
 A plaquinha entrega **tensão alta com o solo seco** e **baixa com o solo molhado**. O percentual é calculado linearmente entre as duas tensões de referência:
 
-1. Forquilha seca ou no ar → botão **Calibrar: SECO** (≈ 3,29 V medido).
-2. Forquilha na água, até a profundidade em que fica enterrada → botão **Calibrar: MOLHADO**.
+| Referência | Tensão calibrada |
+|---|---|
+| Seco (forquilha seca, no ar) | 3,292 V → 0 % |
+| Molhado (forquilha na água) | 1,468 V → 100 % |
+
+O dashboard não tem botões de configuração. Para recalibrar, coloque a forquilha na condição desejada e rode na Pi:
+
+```bash
+mosquitto_pub -h localhost -t irrigacao/cmd -m '{"calibrar":"seco"}'     # forquilha seca/no ar
+mosquitto_pub -h localhost -t irrigacao/cmd -m '{"calibrar":"molhado"}'  # forquilha na água
+```
 
 O painel *Diagnóstico* mostra a tensão do A0 em tempo real.
+
+## Valores de controle
+
+| Parâmetro | Valor | Motivo |
+|---|---|---|
+| `limiar` | 40 % | terra seca lê ~10–30 %, recém-regada ~60–90 % |
+| `tempo_rega` | 5 s | a AD20P bombeia até ~4 L/min: 5 s ≈ até 300 mL por dose |
+| `tempo_espera` | 300 s | a água leva minutos para chegar até a forquilha |
+| `tempo_max_manual` | 30 s | limite de segurança do botão "Ligar bomba" no manual |
+
+Para mudar um valor: `mosquitto_pub -h localhost -t irrigacao/cmd -m '{"limiar": 45}'`.
 
 ## Instalação do zero
 

@@ -1,9 +1,9 @@
 {
   "modo": "manual",
-  "limiar": 35.0,
-  "tempo_rega": 10,
-  "tempo_espera": 60,
-  "tempo_max_manual": 60.0,
+  "limiar": 40.0,
+  "tempo_rega": 5.0,
+  "tempo_espera": 300.0,
+  "tempo_max_manual": 30.0,
   "solo_seco_v": 3.292,
   "solo_molhado_v": 1.468,
   "boia_fechada_tem_agua": true

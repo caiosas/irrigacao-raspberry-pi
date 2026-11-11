@@ -38,8 +38,7 @@ def grupo(nome, ordem, largura=6):
 g_sens = grupo("Sensores", 1)
 g_bomba = grupo("Bomba e reservatório", 2)
 g_hist = grupo("Histórico (última hora)", 3, 12)
-g_cfg = grupo("Configuração", 4)
-g_diag = grupo("Diagnóstico", 5)
+g_diag = grupo("Diagnóstico", 4)
 
 # ------------------------------------------------------------ saída de comandos
 mqtt_out = node("mqtt out", 1150, 660, name="irrigacao/cmd", topic="irrigacao/cmd",
@@ -111,39 +110,13 @@ def botao(rotulo, g, ordem, payload, y, cor="", largura=3):
 botao("Ligar bomba", g_bomba, 5, {"bomba": True}, 460, "#2e7d32")
 botao("Desligar bomba", g_bomba, 6, {"bomba": False}, 500, "#c62828")
 
-f_lim = wrap_cmd("limiar", 540)
-w_lim = node("ui_slider", 760, 540, name="Limiar", label="Regar abaixo de (%)", tooltip="",
-             group=g_cfg, order=1, width=6, height=1, passthru=False, outs="end", topic="limiar",
-             topicType="str", min="5", max="90", step="1", className="", wires=[[f_lim]])
-
-
-def numero(rotulo, chave, ordem, mn, mx, y):
-    f = wrap_cmd(chave, y)
-    return node("ui_numeric", 760, y, name=rotulo, label=rotulo, tooltip="", group=g_cfg,
-                order=ordem, width=6, height=1, wrap=False, passthru=False, topic=chave,
-                topicType="str", format="{{value}}", min=mn, max=mx, step=5, className="",
-                wires=[[f]])
-
-
-w_trega = numero("Tempo de rega (s)", "tempo_rega", 2, 5, 300, 580)
-w_tesp = numero("Espera p/ infiltrar (s)", "tempo_espera", 3, 0, 1800, 620)
-w_tmax = numero("Máx. manual (s)", "tempo_max_manual", 4, 5, 600, 660)
-
-f_boia = wrap_cmd("boia_fechada_tem_agua", 700)
-w_boia = node("ui_switch", 760, 700, name="Lógica da boia", label="Contato fechado = tem água",
-              tooltip="Inverta se o reservatório aparecer vazio com água",
-              group=g_cfg, order=5, width=6, height=1, passthru=False, decouple="true",
-              topic="boia", topicType="str", style="", onvalue="true", onvalueType="bool",
-              onicon="", oncolor="", offvalue="false", offvalueType="bool", officon="",
-              offcolor="", animate=True, className="", wires=[[f_boia]])
-
-botao("Calibrar: SECO", g_cfg, 6, {"calibrar": "seco"}, 740, "#8d6e63")
-botao("Calibrar: MOLHADO", g_cfg, 7, {"calibrar": "molhado"}, 780, "#1565c0")
+# Configuração (limiar, tempos, calibração, lógica da boia) fica fora da tela:
+# edite por MQTT (irrigacao/cmd) — ver README.
 
 # ------------------------------------------------------------ distribuição do estado
 DISTRIB = r"""
 const d = msg.payload;
-const out = new Array(15).fill(null);
+const out = new Array(10).fill(null);
 const ult = context.get('ult') || {};
 // envia só quando muda (evita brigar com o usuário mexendo no controle)
 function seMudou(i, chave, valor) {
@@ -151,7 +124,7 @@ function seMudou(i, chave, valor) {
 }
 
 if (!d || d.online === false) {
-    out[14] = { payload: '🔴 OFFLINE (serviço parado)' };
+    out[9] = { payload: '🔴 OFFLINE (serviço parado)' };
     node.status({ fill: 'red', shape: 'ring', text: 'offline' });
     context.set('ult', ult);
     return out;
@@ -175,14 +148,9 @@ out[6] = { payload: d.motivo };
 
 const c = d.cfg || {};
 seMudou(7, 'modo', c.modo);
-seMudou(8, 'limiar', c.limiar);
-seMudou(9, 'tempo_rega', c.tempo_rega);
-seMudou(10, 'tempo_espera', c.tempo_espera);
-seMudou(11, 'tempo_max_manual', c.tempo_max_manual);
-seMudou(12, 'boia', c.boia_fechada_tem_agua);
 
 const e = d.erros || {};
-out[13] = { payload: [
+out[8] = { payload: [
     ['Tensão do solo (A0)', d.solo_v === null ? '—' : d.solo_v.toFixed(3) + ' V'],
     ['Calibração', `seco ${c.solo_seco_v} V · molhado ${c.solo_molhado_v} V`],
     ['Contato da boia', d.boia_fechada ? 'fechado' : 'aberto'],
@@ -192,18 +160,17 @@ out[13] = { payload: [
         : `ok · última leitura há ${d.dht_idade ?? '—'} s · ${d.dht_taxa}% das tentativas`, !!e.dht],
     ['Atualizado', new Date(d.ts).toLocaleTimeString('pt-BR')],
 ]};
-out[14] = { payload: '🟢 online' };
+out[9] = { payload: '🟢 online' };
 node.status({ fill: d.bomba ? 'green' : 'grey', shape: 'dot',
               text: `solo ${fmt(d.solo_pct, '%')} · bomba ${d.bomba ? 'ON' : 'off'}` });
 context.set('ult', ult);
 return out;
 """
 
-f_dist = node("function", 470, 300, name="Distribui estado", func=DISTRIB.strip(), outputs=15,
+f_dist = node("function", 470, 300, name="Distribui estado", func=DISTRIB.strip(), outputs=10,
               timeout=0, noerr=0, initialize="", finalize="", libs=[],
               wires=[[w_solo], [w_temp], [w_umid], [w_chart], [w_res], [w_bomba], [w_motivo],
-                     [w_modo], [w_lim], [w_trega], [w_tesp], [w_tmax], [w_boia], [w_diag],
-                     [w_online]])
+                     [w_modo], [w_diag], [w_online]])
 node("mqtt in", 220, 300, name="irrigacao/estado", topic="irrigacao/estado", qos="1",
      datatype="json", broker=broker, nl=False, rap=True, rh=0, inputs=0, wires=[[f_dist]])
 
