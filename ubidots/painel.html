@@ -1,0 +1,69 @@
+<div class="ir" id="ir">
+  <header class="ir-topo">
+    <div>
+      <h1>💧 Irrigação automática</h1>
+      <p>Raspberry Pi 4 + Node-RED · acesso pela internet via Ubidots</p>
+    </div>
+    <div class="ir-online" id="ir-online">⏳ conectando…</div>
+  </header>
+
+  <div class="ir-grade">
+    <section class="ir-card">
+      <h2>Sensores</h2>
+      <div class="ir-gauges">
+        <div class="ir-gauge" id="g-solo"></div>
+        <div class="ir-gauge" id="g-temp"></div>
+        <div class="ir-gauge" id="g-umid"></div>
+      </div>
+    </section>
+
+    <section class="ir-card">
+      <h2>Bomba e reservatório</h2>
+      <div class="ir-linha"><span>Reservatório</span><b id="ir-agua">—</b></div>
+      <div class="ir-linha"><span>Bomba</span><b id="ir-bomba">—</b></div>
+      <div class="ir-linha"><span>Situação</span><b id="ir-motivo">—</b></div>
+      <label class="ir-linha ir-switch">
+        <span>Modo automático</span>
+        <input type="checkbox" id="ir-modo" role="switch">
+        <i aria-hidden="true"></i>
+      </label>
+      <div class="ir-botoes">
+        <button type="button" class="ir-btn ir-verde" id="ir-ligar">Ligar bomba</button>
+        <button type="button" class="ir-btn ir-vermelho" id="ir-desligar">Desligar bomba</button>
+      </div>
+      <p class="ir-aviso" id="ir-aviso"></p>
+    </section>
+
+    <section class="ir-card ir-largo">
+      <div class="ir-titulo-linha">
+        <h2>Histórico</h2>
+        <div class="ir-janela" id="ir-janela">
+          <button type="button" data-h="1" class="ativo">1 h</button>
+          <button type="button" data-h="6">6 h</button>
+          <button type="button" data-h="24">24 h</button>
+        </div>
+      </div>
+      <div id="ir-grafico" class="ir-grafico"></div>
+      <div class="ir-legenda" id="ir-legenda"></div>
+    </section>
+
+    <section class="ir-card">
+      <h2>Diagnóstico</h2>
+      <div id="ir-diag"></div>
+    </section>
+
+    <section class="ir-card">
+      <h2>Como funciona o modo automático</h2>
+      <ol class="ir-ajuda">
+        <li>Quando a umidade do solo fica <b>abaixo do limiar (40 %)</b>, a bomba <b>rega por 10 s</b>.</li>
+        <li>Depois, o sistema <b>espera 30 s</b> para a água descer pela terra até a forquilha.
+            Em <i>Situação</i> aparece <b>"aguardando infiltração"</b>.</li>
+        <li>Ao fim da espera, mede de novo: se ainda estiver seco, rega mais uma dose;
+            se passou do limiar, mostra <b>"solo úmido"</b>.</li>
+      </ol>
+      <p class="ir-nota">No automático, <b>Ligar bomba</b> dá uma dose de rega. No manual, liga e
+        desliga sozinha após o tempo máximo. A bomba <b>nunca</b> liga com o reservatório vazio:
+        essa trava fica na própria Raspberry Pi. Os comandos levam alguns segundos para chegar.</p>
+    </section>
+  </div>
+</div>
