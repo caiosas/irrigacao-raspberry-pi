@@ -3,3 +3,4 @@ __pycache__/
 .venv/
 backup_flows_*.json
 pi/config.json
+pi/ubidots.json

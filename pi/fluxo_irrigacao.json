@@ -519,5 +519,183 @@
         "a1a1eb657931da12"
       ]
     ]
+  },
+  {
+    "id": "a1a1000000000002",
+    "type": "tab",
+    "label": "Ubidots",
+    "disabled": false,
+    "info": "Ponte MQTT com o Ubidots (acesso pela internet). Variáveis no device: solo, temperatura, umidade_ar (a cada 120 s), agua, bomba, modo_auto (quando mudam). Os widgets 'bomba' e 'modo_auto' do Ubidots também servem de comando."
+  },
+  {
+    "id": "a1a19b4236102f81",
+    "type": "mqtt-broker",
+    "name": "Ubidots",
+    "broker": "industrial.api.ubidots.com",
+    "port": "8883",
+    "clientid": "",
+    "autoConnect": true,
+    "usetls": true,
+    "protocolVersion": "4",
+    "keepalive": "60",
+    "cleansession": true,
+    "autoUnsubscribe": true,
+    "birthTopic": "",
+    "closeTopic": "",
+    "willTopic": ""
+  },
+  {
+    "id": "a1a1a558aa626a58",
+    "type": "mqtt out",
+    "name": "Ubidots: publicar",
+    "topic": "/v1.6/devices/__UBIDOTS_DEVICE__",
+    "qos": "1",
+    "retain": "false",
+    "broker": "a1a19b4236102f81",
+    "z": "a1a1000000000002",
+    "x": 980,
+    "y": 100,
+    "wires": []
+  },
+  {
+    "id": "a1a13e0795bc5fff",
+    "type": "delay",
+    "name": "máx. 1 msg/s",
+    "pauseType": "rate",
+    "timeout": "5",
+    "timeoutUnits": "seconds",
+    "rate": "1",
+    "nbRateUnits": "1",
+    "rateUnits": "second",
+    "randomFirst": "1",
+    "randomLast": "5",
+    "randomUnits": "seconds",
+    "drop": false,
+    "allowrate": false,
+    "outputs": 1,
+    "z": "a1a1000000000002",
+    "x": 760,
+    "y": 100,
+    "wires": [
+      [
+        "a1a1a558aa626a58"
+      ]
+    ]
+  },
+  {
+    "id": "a1a1c562c73eea3b",
+    "type": "function",
+    "name": "Prepara pontos",
+    "func": "// Estado local (irrigacao/estado, a cada ~2 s) -> pontos para o Ubidots.\n// O Ubidots só guarda números: booleanos viram 0/1.\nconst d = msg.payload;\nif (!d || d.online === false) {\n    node.status({ fill: 'red', shape: 'ring', text: 'serviço offline' });\n    return null;\n}\nconst agora = Date.now();\nconst est = {\n    modo_auto: (d.cfg && d.cfg.modo === 'auto') ? 1 : 0,\n    bomba: d.bomba ? 1 : 0,\n    agua: d.tem_agua ? 1 : 0,\n};\nconst ant = flow.get('ub_estado');\nflow.set('ub_estado', est);\n\nconst dots = {};\n// eventos: na hora em que mudam (e todos na primeira mensagem, para sobrescrever\n// valores antigos que tenham ficado no Ubidots)\nfor (const k of Object.keys(est)) {\n    if (!ant || ant[k] !== est[k]) dots[k] = est[k];\n}\n// depois de um comando vindo do Ubidots, reenvia o estado real dos controles\n// (ex.: rega recusada por falta de água -> o botão volta para 0)\nconst rs = flow.get('ub_resync') || 0;\nif (rs && agora >= rs) {\n    flow.set('ub_resync', 0);\n    dots.modo_auto = est.modo_auto;\n    dots.bomba = est.bomba;\n}\n// sensores: a cada 120 segundos\nif (agora - (context.get('ult_sens') || 0) >= 120 * 1000) {\n    context.set('ult_sens', agora);\n    if (d.solo_pct !== null) dots.solo = d.solo_pct;\n    if (d.temp !== null) dots.temperatura = d.temp;\n    if (d.umid_ar !== null) dots.umidade_ar = d.umid_ar;\n}\nif ('bomba' in dots && d.motivo) {\n    dots.bomba = { value: dots.bomba, context: { motivo: String(d.motivo).slice(0, 100) } };\n}\nif (!Object.keys(dots).length) return null;\nnode.status({ fill: 'green', shape: 'dot',\n              text: new Date(agora).toLocaleTimeString('pt-BR') + ' · ' + Object.keys(dots).join(', ') });\nmsg.payload = dots;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "z": "a1a1000000000002",
+    "x": 520,
+    "y": 100,
+    "wires": [
+      [
+        "a1a13e0795bc5fff"
+      ]
+    ]
+  },
+  {
+    "id": "a1a182fbf2353e74",
+    "type": "mqtt in",
+    "name": "estado local",
+    "topic": "irrigacao/estado",
+    "qos": "1",
+    "datatype": "json",
+    "broker": "a1a11268bf3a398b",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "z": "a1a1000000000002",
+    "x": 220,
+    "y": 100,
+    "wires": [
+      [
+        "a1a1c562c73eea3b"
+      ]
+    ]
+  },
+  {
+    "id": "a1a18ccbb69c0a35",
+    "type": "mqtt out",
+    "name": "irrigacao/cmd (do Ubidots)",
+    "topic": "irrigacao/cmd",
+    "qos": "1",
+    "retain": "false",
+    "broker": "a1a11268bf3a398b",
+    "z": "a1a1000000000002",
+    "x": 760,
+    "y": 260,
+    "wires": []
+  },
+  {
+    "id": "a1a1c3135b7efbc9",
+    "type": "function",
+    "name": "Comandos do Ubidots",
+    "func": "// Valor de um widget do Ubidots (/lv = só o número, ex. \"1.0\") -> irrigacao/cmd.\n// Ignora ecos: só age se o valor for diferente do estado real da Pi.\nif (Date.now() - (flow.get('ub_inicio') || 0) < 10000) {\n    // logo após conectar o Ubidots devolve o último valor guardado; não é comando novo\n    return null;\n}\nconst est = flow.get('ub_estado');\nif (!est) return null;\nconst v = parseFloat(String(msg.payload)) >= 0.5 ? 1 : 0;\nconst variavel = msg.topic.split('/')[4];   // /v1.6/devices/<device>/<variavel>/lv\nlet cmd = null;\nif (variavel === 'modo_auto' && v !== est.modo_auto) {\n    cmd = { modo: v ? 'auto' : 'manual' };\n} else if (variavel === 'bomba' && v !== est.bomba) {\n    // ligar: no automático vira uma dose de rega; no manual, liga até tempo_max_manual.\n    // As travas (boia, tempo máximo) continuam no irrigacao.py.\n    cmd = v ? (est.modo_auto ? { regar: true } : { bomba: true }) : { bomba: false };\n}\nif (!cmd) return null;\nflow.set('ub_resync', Date.now() + 5000);\nnode.status({ fill: 'blue', shape: 'dot',\n              text: new Date().toLocaleTimeString('pt-BR') + ' ' + JSON.stringify(cmd) });\nreturn { payload: cmd };",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "flow.set('ub_inicio', Date.now());",
+    "finalize": "",
+    "libs": [],
+    "z": "a1a1000000000002",
+    "x": 520,
+    "y": 260,
+    "wires": [
+      [
+        "a1a18ccbb69c0a35"
+      ]
+    ]
+  },
+  {
+    "id": "a1a1db1b863a7441",
+    "type": "mqtt in",
+    "name": "Ubidots: modo_auto",
+    "topic": "/v1.6/devices/__UBIDOTS_DEVICE__/modo_auto/lv",
+    "qos": "1",
+    "datatype": "utf8",
+    "broker": "a1a19b4236102f81",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "z": "a1a1000000000002",
+    "x": 220,
+    "y": 240,
+    "wires": [
+      [
+        "a1a1c3135b7efbc9"
+      ]
+    ]
+  },
+  {
+    "id": "a1a1f238be693ed6",
+    "type": "mqtt in",
+    "name": "Ubidots: bomba",
+    "topic": "/v1.6/devices/__UBIDOTS_DEVICE__/bomba/lv",
+    "qos": "1",
+    "datatype": "utf8",
+    "broker": "a1a19b4236102f81",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "z": "a1a1000000000002",
+    "x": 220,
+    "y": 280,
+    "wires": [
+      [
+        "a1a1c3135b7efbc9"
+      ]
+    ]
   }
 ]
