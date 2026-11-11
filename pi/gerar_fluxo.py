@@ -1,15 +1,27 @@
 #!/usr/bin/env python3
 """Gera fluxo_irrigacao.json (aba do Node-RED + dashboard v1 node-red-dashboard)."""
+import hashlib
 import json
 import os
 
 TAB = "a1a1000000000001"
-nid = iter(f"a1a1{i:012x}" for i in range(2, 1000))
 nodes = []
 
 
+def _id(type_, kw):
+    """ID estável (prefixo a1a1 + hash do tipo/nome): inserir um nó novo não muda
+    o ID dos outros, o que evitava erros do dashboard no deploy a quente."""
+    chave = f"{type_}|{kw.get('name') or kw.get('label') or kw.get('title') or ''}"
+    base = "a1a1" + hashlib.sha1(chave.encode()).hexdigest()[:12]
+    i, nid = 0, base
+    while any(n["id"] == nid for n in nodes):
+        i += 1
+        nid = "a1a1" + hashlib.sha1(f"{chave}|{i}".encode()).hexdigest()[:12]
+    return nid
+
+
 def node(type_, x=0, y=0, wires=None, z=TAB, **kw):
-    n = {"id": next(nid), "type": type_, **kw}
+    n = {"id": _id(type_, kw), "type": type_, **kw}
     if z:
         n["z"] = z
         n["x"], n["y"] = x, y
@@ -39,6 +51,7 @@ g_sens = grupo("Sensores", 1)
 g_bomba = grupo("Bomba e reservatório", 2)
 g_hist = grupo("Histórico (última hora)", 3, 12)
 g_diag = grupo("Diagnóstico", 4)
+g_ajuda = grupo("Como funciona o modo automático", 5)
 
 # ------------------------------------------------------------ saída de comandos
 mqtt_out = node("mqtt out", 1150, 660, name="irrigacao/cmd", topic="irrigacao/cmd",
@@ -82,6 +95,31 @@ w_diag = node("ui_template", 760, 360, group=g_diag, name="Detalhes", order=2, w
               storeOutMessages=True, fwdInMessages=False, resendOnRefresh=True,
               templateScope="local", className="", wires=[[]])
 
+AJUDA = """
+<div style="font-size:13px;line-height:1.55">
+  <ol style="margin:0 0 8px 0;padding-left:18px">
+    <li>Quando a umidade do solo fica <b>abaixo de {{msg.payload.limiar}} %</b>,
+        a bomba <b>rega por {{msg.payload.tempo_rega}} s</b>.</li>
+    <li>Depois, o sistema <b>espera {{msg.payload.tempo_espera / 60 | number:0}} min</b>
+        para a água descer pela terra até a forquilha.
+        Em <i>Situação</i> aparece <b>"aguardando infiltração"</b> com a contagem.</li>
+    <li>Ao fim da espera, mede de novo: se ainda estiver seco, rega mais uma dose;
+        se passou de {{msg.payload.limiar}} %, mostra <b>"solo úmido"</b> e não faz nada.</li>
+  </ol>
+  <div style="opacity:.85">
+    <b>Por que esperar?</b> Logo após regar, a água ainda está na superfície e o solo
+    parece seco para o sensor. Sem a pausa, o sistema regaria várias vezes seguidas e
+    encharcaria o vaso.<br>
+    Durante a contagem a bomba não liga no automático. Para ligar na hora,
+    desligue o <b>Modo automático</b> e use <b>Ligar bomba</b>.
+    A bomba nunca liga com o reservatório vazio.
+  </div>
+</div>
+"""
+w_ajuda = node("ui_template", 760, 400, group=g_ajuda, name="Como funciona", order=1, width=6,
+               height=7, format=AJUDA.strip(), storeOutMessages=True, fwdInMessages=False,
+               resendOnRefresh=True, templateScope="local", className="", wires=[[]])
+
 # ------------------------------------------------------------ controles (entrada e saída)
 wrap = {}
 
@@ -116,7 +154,7 @@ botao("Desligar bomba", g_bomba, 6, {"bomba": False}, 500, "#c62828")
 # ------------------------------------------------------------ distribuição do estado
 DISTRIB = r"""
 const d = msg.payload;
-const out = new Array(10).fill(null);
+const out = new Array(11).fill(null);
 const ult = context.get('ult') || {};
 // envia só quando muda (evita brigar com o usuário mexendo no controle)
 function seMudou(i, chave, valor) {
@@ -148,6 +186,11 @@ out[6] = { payload: d.motivo };
 
 const c = d.cfg || {};
 seMudou(7, 'modo', c.modo);
+const ajuda = `${c.limiar}|${c.tempo_rega}|${c.tempo_espera}`;
+if (ult.ajuda !== ajuda) {
+    ult.ajuda = ajuda;
+    out[10] = { payload: { limiar: c.limiar, tempo_rega: c.tempo_rega, tempo_espera: c.tempo_espera } };
+}
 
 const e = d.erros || {};
 out[8] = { payload: [
@@ -167,10 +210,10 @@ context.set('ult', ult);
 return out;
 """
 
-f_dist = node("function", 470, 300, name="Distribui estado", func=DISTRIB.strip(), outputs=10,
+f_dist = node("function", 470, 300, name="Distribui estado", func=DISTRIB.strip(), outputs=11,
               timeout=0, noerr=0, initialize="", finalize="", libs=[],
               wires=[[w_solo], [w_temp], [w_umid], [w_chart], [w_res], [w_bomba], [w_motivo],
-                     [w_modo], [w_diag], [w_online]])
+                     [w_modo], [w_diag], [w_online], [w_ajuda]])
 node("mqtt in", 220, 300, name="irrigacao/estado", topic="irrigacao/estado", qos="1",
      datatype="json", broker=broker, nl=False, rap=True, rh=0, inputs=0, wires=[[f_dist]])
 
