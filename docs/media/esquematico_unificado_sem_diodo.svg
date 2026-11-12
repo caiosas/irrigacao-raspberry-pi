@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1380" height="840" viewBox="0 0 1380 840"><rect width="1380" height="840" fill="#f7fafc"/>
+<rect x="0" y="0" width="1380" height="86" fill="#102e53"/>
+<text x="34" y="38" font-family="Arial,Helvetica,sans-serif" font-size="28" fill="#ffffff" font-weight="700" text-anchor="start">SISTEMA DE IRRIGAÇÃO — CONEXÕES UNIFICADAS</text>
+<text x="34" y="68" font-family="Arial,Helvetica,sans-serif" font-size="17" fill="#dbeafe" font-weight="400" text-anchor="start">Raspberry Pi 4 · ADS1115 · Sonda resistiva · DHT22 · Boia · TIP122 · Bomba 12 V</text>
+<rect x="35" y="118" width="338" height="174" rx="14" fill="#fffef6" stroke="#94a3b8" stroke-width="2"/>
+<text x="53" y="150" font-family="Arial,Helvetica,sans-serif" font-size="20" fill="#0f3f70" font-weight="700" text-anchor="start">ALIMENTAÇÃO</text>
+<text x="53" y="183" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">Raspberry Pi 4: USB-C (5 V)</text>
+<text x="53" y="208" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">Bomba: fonte DC independente (12 V)</text>
+<text x="53" y="233" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">GND da Pi e fonte 12 V em comum.</text>
+<text x="53" y="258" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">Não foi utilizado conversor buck.</text>
+<rect x="443" y="154" width="449" height="466" rx="14" fill="#f2f8ff" stroke="#94a3b8" stroke-width="2"/>
+<text x="461" y="186" font-family="Arial,Helvetica,sans-serif" font-size="20" fill="#0f3f70" font-weight="700" text-anchor="start">RASPBERRY PI 4</text>
+<text x="461" y="219" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">Pino físico 1     →  3,3 V</text>
+<text x="461" y="244" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">Pino físico 3     →  GPIO2 / SDA</text>
+<text x="461" y="269" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">Pino físico 5     →  GPIO3 / SCL</text>
+<text x="461" y="294" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">Pino físico 6     →  GND</text>
+<text x="461" y="319" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">Pino físico 7     →  GPIO4 / DHT_DATA</text>
+<text x="461" y="344" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">Pino físico 11   →  GPIO17 / BOIA</text>
+<text x="461" y="369" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">Pino físico 13   →  GPIO27 / BOMBA_CTRL</text>
+<rect x="966" y="123" width="375" height="154" rx="14" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+<text x="984" y="155" font-family="Arial,Helvetica,sans-serif" font-size="20" fill="#0f3f70" font-weight="700" text-anchor="start">ADS1115 — CONVERSOR A/D</text>
+<text x="984" y="188" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">VDD: +3,3 V   |   GND: terra comum</text>
+<text x="984" y="213" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">SDA: GPIO2   |   SCL: GPIO3</text>
+<text x="984" y="238" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">ADDR: GND (I²C 0x48)   |   A0: SOLO_AO</text>
+<rect x="966" y="302" width="375" height="126" rx="14" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+<text x="984" y="334" font-family="Arial,Helvetica,sans-serif" font-size="20" fill="#0f3f70" font-weight="700" text-anchor="start">SONDA RESISTIVA</text>
+<text x="984" y="367" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">Forquilha → módulo de umidade</text>
+<text x="984" y="392" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">Módulo VCC: +3,3 V   |   GND: comum</text>
+<text x="984" y="417" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">Saída AO → ADS1115 A0; DO livre</text>
+<rect x="35" y="337" width="338" height="143" rx="14" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+<text x="53" y="369" font-family="Arial,Helvetica,sans-serif" font-size="20" fill="#0f3f70" font-weight="700" text-anchor="start">DHT22 — TEMP. / UMID. AR</text>
+<text x="53" y="402" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">VCC: +3,3 V  |  GND: comum</text>
+<text x="53" y="427" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">DATA: GPIO4 (pino físico 7)</text>
+<text x="53" y="452" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">R3: 4,7 kΩ pull-up VCC ↔ DATA</text>
+<text x="53" y="477" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">C1: 100 nF entre VCC e GND</text>
+<rect x="35" y="502" width="338" height="132" rx="14" fill="#ffffff" stroke="#94a3b8" stroke-width="2"/>
+<text x="53" y="534" font-family="Arial,Helvetica,sans-serif" font-size="20" fill="#0f3f70" font-weight="700" text-anchor="start">BOIA — NÍVEL DO TANQUE</text>
+<text x="53" y="567" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">Contato seco de 2 fios</text>
+<text x="53" y="592" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">GPIO17 (pino físico 11) e GND</text>
+<text x="53" y="617" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">Pull-up interno habilitado</text>
+<text x="53" y="642" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">Contato fechado: leitura 0</text>
+<rect x="966" y="465" width="375" height="222" rx="14" fill="#fffaf7" stroke="#94a3b8" stroke-width="2"/>
+<text x="984" y="497" font-family="Arial,Helvetica,sans-serif" font-size="20" fill="#0f3f70" font-weight="700" text-anchor="start">BOMBA 12 V — TIP122</text>
+<text x="984" y="530" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">Bomba + → +12 V da fonte</text>
+<text x="984" y="555" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">Bomba − → coletor (pino 2)</text>
+<text x="984" y="580" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">Emissor (pino 3) → GND</text>
+<text x="984" y="605" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">GPIO27 → R1 330 Ω → base (pino 1)</text>
+<text x="984" y="630" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">R2 10 kΩ: base → GND</text>
+<text x="984" y="655" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#1e293b" font-weight="400" text-anchor="start">Sem diodo na montagem informada</text>
+<polyline points="892,265 929,265 929,170 966,170" fill="none" stroke="#157a9a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="931" y="163" font-family="Arial,Helvetica,sans-serif" font-size="14" fill="#157a9a" font-weight="700" text-anchor="start">SDA</text>
+<polyline points="892,292 942,292 942,208 966,208" fill="none" stroke="#157a9a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="934" y="229" font-family="Arial,Helvetica,sans-serif" font-size="14" fill="#157a9a" font-weight="700" text-anchor="start">SCL</text>
+<polyline points="966,381 920,381 920,400 892,400" fill="none" stroke="#19a36c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="923" y="371" font-family="Arial,Helvetica,sans-serif" font-size="13" fill="#166534" font-weight="700" text-anchor="start">SOLO_AO</text>
+<polyline points="373,391 411,391 411,437 443,437" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="379" y="379" font-family="Arial,Helvetica,sans-serif" font-size="13" fill="#166534" font-weight="700" text-anchor="start">DHT_DATA</text>
+<polyline points="373,568 408,568 408,529 443,529" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="382" y="551" font-family="Arial,Helvetica,sans-serif" font-size="13" fill="#166534" font-weight="700" text-anchor="start">BOIA</text>
+<polyline points="892,552 932,552 932,558 966,558" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="898" y="540" font-family="Arial,Helvetica,sans-serif" font-size="13" fill="#166534" font-weight="700" text-anchor="start">BOMBA_CTRL</text>
+<polyline points="373,239 420,239 420,182 443,182" fill="none" stroke="#d97706" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="379" y="228" font-family="Arial,Helvetica,sans-serif" font-size="13" fill="#92400e" font-weight="700" text-anchor="start">5 V USB-C</text>
+<polyline points="373,268 398,268 398,650 947,650 947,633 966,633" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<text x="590" y="643" font-family="Arial,Helvetica,sans-serif" font-size="14" fill="#475569" font-weight="700" text-anchor="start">REFERÊNCIA GND COMUM</text>
+<polyline points="1117,302 1117,277" fill="none" stroke="#19a36c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="1117" cy="277" r="5" fill="#19a36c"/>
+<text x="1132" y="290" font-family="Arial,Helvetica,sans-serif" font-size="13" fill="#166534" font-weight="700" text-anchor="start">SOLO_AO → A0</text>
+<rect x="34" y="717" width="1308" height="88" rx="12" fill="#fff1f2" stroke="#fda4af" stroke-width="2"/>
+<text x="52" y="745" font-family="Arial,Helvetica,sans-serif" font-size="18" fill="#9f1239" font-weight="700" text-anchor="start">ATENÇÃO — AUSÊNCIA DE DIODO DE PROTEÇÃO</text>
+<text x="52" y="773" font-family="Arial,Helvetica,sans-serif" font-size="16" fill="#881337" font-weight="400" text-anchor="start">Este desenho documenta a montagem relatada (sem diodo), não um circuito elétrico recomendado para energização.</text>
+<text x="52" y="793" font-family="Arial,Helvetica,sans-serif" font-size="15" fill="#881337" font-weight="400" text-anchor="start">A proteção contra surtos da bomba, a corrente de partida e a dissipação do TIP122 devem ser avaliadas antes dos testes.</text>
+<text x="37" y="828" font-family="Arial,Helvetica,sans-serif" font-size="13" fill="#64748b" font-weight="400" text-anchor="start">Esquema funcional de conexões — etiquetas de sinal indicam as interligações. O circuito detalhado original permanece em sch.jpeg.</text>
+</svg>
