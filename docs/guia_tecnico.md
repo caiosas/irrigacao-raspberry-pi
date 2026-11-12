@@ -4,7 +4,7 @@ Este guia documenta a implementação de controle local e a publicação remota 
 
 Sistema de irrigação para a disciplina de microcontroladores. A Raspberry Pi 4 lê a umidade do solo, a temperatura e a umidade do ar e o nível do reservatório. Com essas leituras ela aciona uma bomba de 12 V, sozinha (modo automático) ou pelo dashboard do Node-RED (modo manual).
 
-![Dashboard](docs/dashboard.jpg)
+![Dashboard](dashboard.jpg)
 
 ## Acesso rápido
 
