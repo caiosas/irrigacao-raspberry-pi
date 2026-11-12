@@ -1,5 +1,17 @@
 # Sistema de Irrigação Automatizada com Raspberry Pi 4
 
+## ▶️ Assista ao projeto funcionando
+
+[![Clique na imagem para assistir ao vídeo completo da irrigação automatizada](docs/media/painel_notebook.jpg)](https://github.com/caiosas/irrigacao-raspberry-pi/releases/download/demonstracao-irrigacao-v1/demonstracao_completa.mp4)
+
+### [▶ ASSISTIR AO VÍDEO ORIGINAL COMPLETO — 4 MIN 13 S](https://github.com/caiosas/irrigacao-raspberry-pi/releases/download/demonstracao-irrigacao-v1/demonstracao_completa.mp4)
+
+**[▶ Assistir diretamente no repositório (MP4 compacto)](demonstracao.mp4)** · **[Ver a demonstração no GitHub Releases](https://github.com/caiosas/irrigacao-raspberry-pi/releases/tag/demonstracao-irrigacao-v1)**
+
+Vídeo com a montagem do circuito, o painel em funcionamento e o acesso remoto pelo Tailscale no notebook e no celular.
+
+---
+
 ## Integrantes
 
 Caio Almeida - 23.00188-7 Enzo Arigoni - 22.01293-0 Marcus Miyamoto - 23.01288-9 Luiz Antônio Kastrupp - 23.01176-9
@@ -15,7 +27,7 @@ O trabalho é dividido em **duas partes**, utilizando a mesma montagem e o códi
 
 O projeto utiliza o código completo da equipe, a partir do [repositório original de Marcus Miyamoto](https://github.com/marcusmmqm/irrigacao-raspberry-pi). Este repositório é um **fork** e preserva o histórico do trabalho e os arquivos existentes.
 
-**Tecnologia efetivamente utilizada para acesso remoto: Tailscale Funnel.** A plataforma Ubidots aparece em arquivos herdados do repositório original, mas **não foi utilizada no projeto apresentado**, nem na primeira nem na segunda parte.
+**Tecnologia utilizada para acesso remoto na Parte 2: Tailscale Funnel.**
 
 ## Aplicação do Sistema
 
@@ -30,7 +42,7 @@ A estrutura prevista para aplicação é uma **torre vertical de cultivo**, form
 O vídeo completo mostra a montagem, o funcionamento do sistema e a interface acessada remotamente. As três gravações foram reunidas na sequência original, com duração de **4 min 13 s** e áudio preservado.
 
 - [**Vídeo original completo — MP4**](https://github.com/caiosas/irrigacao-raspberry-pi/releases/download/demonstracao-irrigacao-v1/demonstracao_completa.mp4) — 4 min 13 s, 33,7 MB, com áudio; publicado no GitHub Releases e validado por SHA-256.
-- [**Versão compacta do vídeo**](docs/media/demonstracao_compacta.mp4) — mantém toda a sequência, com qualidade de imagem e áudio reduzida para acesso mais leve.
+- [**Versão compacta do vídeo (na raiz do repositório)**](demonstracao.mp4) — mantém toda a sequência, com qualidade de imagem e áudio reduzida para acesso mais leve.
 - [**Arquivos de preservação do original**](docs/media/video_original_partes/README.md) — cópia exata dividida em 19 partes, com script para reconstruí-la e conferência de integridade.
 
 O vídeo de 33,7 MB foi reconstruído e publicado automaticamente pelo GitHub Actions. A versão original e a cópia segmentada têm o mesmo conteúdo.
@@ -115,6 +127,9 @@ Os parâmetros de referência documentados são: limiar de umidade **40%**, temp
 
 ## Como Executar
 
+**Atualização de uma instalação existente:** depois de copiar os arquivos atualizados `pi/gerar_fluxo.py`, `pi/fluxo_irrigacao.json` e `pi/instalar_fluxo.py` para a Raspberry Pi, execute `python3 ~/irrigacao/instalar_fluxo.py` para remover os nós antigos do projeto que não fazem parte desta versão. O script realiza um backup antes do deploy. Atualizar apenas o GitHub não altera o fluxo que está rodando na Raspberry Pi.
+
+
 ### Parte 1 — Montagem e funcionamento local
 
 1. Montar o circuito, conferir as ligações e avaliar a proteção da bomba.
@@ -150,7 +165,6 @@ Os parâmetros de referência documentados são: limiar de umidade **40%**, temp
 | `pi/irrigacao.service` | Serviço systemd |
 | `pi/node_red_senha.py` | Autenticação do Node-RED |
 | `pi/setup_funnel.sh` | Configuração do Tailscale Funnel |
-| `ubidots/` | Arquivos legados do repositório-base — **não utilizados neste projeto** |
 | `sch.jpeg` | Esquemático original da equipe |
 | `docs/dashboard.jpg` | Imagem do dashboard original |
 | `docs/media/esquematico_unificado_sem_diodo.svg` | Esquema unificado representando a montagem relatada |
@@ -158,17 +172,18 @@ Os parâmetros de referência documentados são: limiar de umidade **40%**, temp
 | `docs/media/torre_vertical_aplicacao.png` | Foto original da torre de cultivo |
 | `docs/media/circuito_raspberry_pi.jpg` | Registro da montagem da Raspberry Pi |
 | `docs/media/painel_notebook.jpg`, `painel_celular.jpg` | Registros da interface usada na Parte 2 |
-| `docs/media/demonstracao_compacta.mp4` | Vídeo completo em versão compacta, com áudio |
+| `demonstracao.mp4` | Versão compacta de acesso rápido ao vídeo, na pasta principal |
+| `docs/media/demonstracao_compacta.mp4` | Cópia da demonstração compacta, com áudio |
 | `docs/media/video_original_partes/` | Vídeo original, preservado sem recompressão em 19 partes |
 | `docs/media/reconstruir_video.py` | Script que recompõe e valida o MP4 original |
 | `.github/workflows/publicar_video.yml` | Automação executada com sucesso para publicar o MP4 original no GitHub Releases |
 | `docs/parte_1_montagem_e_controle.md` | Detalhes da Parte 1 |
 | `docs/parte_2_acesso_online_tailscale.md` | Detalhes da Parte 2 |
-| `docs/README_TECNICO_ORIGINAL.md` | Documentação técnica completa do projeto-base |
+| `docs/guia_tecnico.md` | Guia técnico da implementação local e do acesso via Tailscale |
 | `lista_de_materiais.md` | Lista de componentes |
 
 ## Documentação Técnica e Créditos
 
-A descrição detalhada de instalação, MQTT, calibração e diagnóstico foi preservada integralmente no [README técnico original](docs/README_TECNICO_ORIGINAL.md). Esse documento é um registro do projeto-base e contém referências à alternativa Ubidots, **que não foi implementada nem utilizada pela nossa equipe**.
+A documentação de instalação, MQTT, calibração e diagnóstico está no [guia técnico do projeto](docs/guia_tecnico.md). O código-base e o histórico original permanecem acessíveis pelo link do repositório de origem.
 
 **Repositório-base:** [marcusmmqm/irrigacao-raspberry-pi](https://github.com/marcusmmqm/irrigacao-raspberry-pi). O fork mantém o histórico e o reconhecimento do trabalho da equipe, com complementos de apresentação e documentação das duas partes.
