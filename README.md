@@ -1,261 +1,140 @@
-# Irrigação automática — Raspberry Pi 4 + Node-RED
+# Sistema de Irrigação Automatizada com Raspberry Pi 4
 
-Sistema de irrigação para a disciplina de microcontroladores. A Raspberry Pi 4 lê a umidade do solo, a temperatura e a umidade do ar e o nível do reservatório. Com essas leituras ela aciona uma bomba de 12 V, sozinha (modo automático) ou pelo dashboard do Node-RED (modo manual).
+## Integrantes
 
-![Dashboard](docs/dashboard.jpg)
+Projeto desenvolvido em grupo para a disciplina de Microcontroladores. Os nomes e registros acadêmicos podem ser acrescentados quando a lista oficial da equipe estiver confirmada.
 
-## Acesso rápido
+## Descrição do Projeto
 
-| O quê | Endereço |
+Este projeto consiste no desenvolvimento de um **sistema automatizado de irrigação e monitoramento** utilizando uma **Raspberry Pi 4**. O circuito acompanha a umidade do solo, a temperatura e umidade do ar e a disponibilidade de água no reservatório para comandar uma bomba submersível de 12 V, automaticamente ou através de uma interface de controle.
+
+O trabalho é dividido em **duas partes**, utilizando a mesma montagem e o código desenvolvido pela equipe:
+
+1. **Parte 1 — Montagem e controle local:** construção do circuito, integração dos sensores, programação da Raspberry Pi, comunicação MQTT e controle manual/automático pelo Node-RED na rede local.
+2. **Parte 2 — Disponibilização online:** configuração de **Tailscale Funnel** para acessar o mesmo dashboard remotamente pelo notebook ou celular, sem mudar o processamento ou o comando físico da bomba para um servidor externo.
+
+O projeto utiliza o código completo da equipe, a partir do [repositório original de Marcus Miyamoto](https://github.com/marcusmmqm/irrigacao-raspberry-pi). Este repositório é um **fork** e preserva o histórico do trabalho e os arquivos existentes.
+
+## Aplicação do Sistema
+
+A estrutura prevista para aplicação é uma **torre vertical de cultivo**, formada por um tubo com diversas posições de plantio. A automação pretende auxiliar o acompanhamento e acionamento da irrigação dessa estrutura.
+
+A fotografia da torre enviada pela equipe e os vídeos de demonstração fazem parte do conjunto de mídias preparado para este projeto. As mídias binárias ainda precisam ser incorporadas ao repositório, sem alterar o conteúdo original.
+
+## Funcionamento Geral
+
+1. A **Raspberry Pi 4** recebe as medições da sonda resistiva de umidade do solo pelo conversor A/D **ADS1115**, através de I²C.
+2. O sensor **DHT22** informa temperatura e umidade relativa do ar.
+3. Uma **boia** monitora a presença de água no reservatório.
+4. O controlador [`pi/irrigacao.py`](pi/irrigacao.py) avalia os dados e aciona a bomba por meio do transistor **TIP122**.
+5. No **modo automático**, um limiar de umidade e os tempos configurados definem a irrigação.
+6. No **modo manual**, o operador pode comandar a bomba pelo dashboard, preservando os limites de tempo e a verificação da boia.
+7. O **Mosquitto (MQTT)** transporta o estado e os comandos entre o programa Python e o painel **Node-RED**.
+8. Na **segunda parte**, o **Tailscale Funnel** disponibiliza acesso HTTPS ao dashboard já instalado na Raspberry Pi.
+
+## Lista de Materiais
+
+| Quantidade | Componente |
+|---:|---|
+| 1 | Raspberry Pi 4 e fonte USB-C |
+| 1 | Conversor analógico-digital ADS1115 |
+| 1 | Sonda resistiva e módulo analógico de umidade do solo |
+| 1 | Sensor DHT22 (temperatura e umidade do ar) |
+| 1 | Boia de nível de dois fios |
+| 1 | Transistor TIP122 (Darlington) |
+| 1 | Bomba submersível de 12 V DC |
+| 1 | Fonte de 12 V para a bomba |
+| 1 | Resistor de 330 Ω (R1) |
+| 1 | Resistor de 10 kΩ (R2) |
+| 1 | Resistor de 4,7 kΩ (R3) |
+| 1 | Capacitor cerâmico de 100 nF (C1) |
+| Conforme a montagem | Fios e conectores |
+
+Veja também [`lista_de_materiais.md`](lista_de_materiais.md).
+
+## Ligações Principais
+
+| Função | Conexão / pino físico da Raspberry Pi |
 |---|---|
-| **SSH** | `ssh pi@10.33.133.22` (ou `ssh pi@raspberrypi.local`) |
-| **Dashboard** | http://10.33.133.22:1880/ui |
-| **Editor do Node-RED** | http://10.33.133.22:1880 |
-| **De qualquer lugar (internet)** | `https://irrigacao.<sua-rede>.ts.net/ui`. Veja [Acesso pela internet](#acesso-pela-internet-tailscale-funnel) |
+| Alimentação dos sensores | 3,3 V (pino 1) |
+| GND comum | Pino 6; negativo da fonte 12 V interligado |
+| ADS1115 / SDA | GPIO2 (pino 3) |
+| ADS1115 / SCL | GPIO3 (pino 5) |
+| Sonda de solo | AO do módulo → A0 do ADS1115 |
+| DHT22 / DATA | GPIO4 (pino 7), pull-up de 4,7 kΩ |
+| Boia | GPIO17 (pino 11), com pull-up interno |
+| TIP122 / bomba | GPIO27 (pino 13), com R1 = 330 Ω na base e R2 = 10 kΩ para GND |
 
-### Rede Wi-Fi
+A Raspberry Pi é alimentada por USB-C e a bomba por uma fonte separada de 12 V; não foi utilizado conversor buck.
 
-> O IP **10.33.133.22** é atribuído por DHCP e pode mudar.
-> Se não responder, tente `raspberrypi.local`. Também dá para procurar a Pi na rede com
-> `nmap -sn 10.33.133.0/24` e ver os MACs que começam com `2c:cf:67` (Raspberry Pi).
-> O acesso é por chave SSH. O `sudo` pede senha, exceto para reiniciar os serviços do projeto (veja [Operação](#operação)).
+### Esquemático da montagem
 
-## Hardware
+![Esquemático unificado do sistema sem diodo](docs/media/esquematico_unificado_sem_diodo.svg)
 
-O esquema completo está em [`sch.jpeg`](sch.jpeg). Ele usa duas fontes (USB-C da Pi + 12 V da bomba), não tem conversor buck e todos os GNDs são comuns.
+[Visualizar o esquema unificado em SVG](docs/media/esquematico_unificado_sem_diodo.svg) · [Ver o esquema original do grupo](sch.jpeg)
 
-| Componente | Ligação na Pi (pino **físico**) | Observação |
-|---|---|---|
-| Alimentação 3,3 V | 1 (3V3) | ADS1115, plaquinha do solo, DHT22 |
-| GND comum | 6 | inclui o negativo da fonte de 12 V |
-| ADS1115 (I²C) | 3 (SDA) · 5 (SCL) | ADDR no GND → endereço `0x48`; A0 = umidade do solo |
-| Sonda de solo (forquilha + plaquinha) | A0 do ADS1115 | plaquinha em 3,3 V; DO livre |
-| DHT22 | 7 (GPIO4) | pull-up R3 = 4,7 kΩ, C1 = 100 nF |
-| Boia (contato seco) | 11 (GPIO17) | pull-up interno; contato fechado = 0 |
-| Bomba 12 V via TIP122 | 13 (GPIO27) | R1 = 330 Ω na base, R2 = 10 kΩ base→GND, diodo 1N5822 em paralelo com a bomba |
+**Observação:** a montagem relatada **não usou o diodo de proteção** que aparece no desenho original. O esquema unificado documenta essa informação, mas **não valida a segurança do circuito**. Uma bomba/motor pode causar surtos de tensão no desligamento; é importante definir proteção adequada e verificar a corrente e o aquecimento do TIP122 antes de energizar.
 
-A bomba é uma **AD20P brushless submersível**. Ela tem polaridade (vermelho no +12 V, preto no coletor do TIP122) e **não pode rodar a seco**. O negativo da fonte de 12 V vai direto ao emissor do TIP122, e desse mesmo ponto sai um fio fino até o GND da Pi. Assim a corrente da bomba não passa pelo GND dos sensores.
+## Interface de Monitoramento
 
-Os pinos físicos 2 e 4 (5 V) **ficam livres**.
+O dashboard do Node-RED exibe as medições dos sensores, a situação do reservatório, o estado da bomba e as opções de controle.
 
-## Arquitetura
+![Painel de irrigação do projeto-base](docs/dashboard.jpg)
 
-```mermaid
-flowchart LR
-    subgraph Pi["Raspberry Pi 4"]
-        S["irrigacao.py<br/>(serviço systemd)"]
-        M[("Mosquitto<br/>localhost:1883")]
-        N["Node-RED<br/>dashboard :1880/ui"]
-        S -- "irrigacao/estado" --> M --> N
-        N -- "irrigacao/cmd" --> M --> S
-    end
-    ADS["ADS1115<br/>(solo)"] -- I²C --> S
-    DHT["DHT22"] -- "GPIO4<br/>driver do kernel" --> S
-    B["Boia"] -- GPIO17 --> S
-    S -- GPIO27 --> T["TIP122 → bomba 12 V"]
-```
+## Código da Raspberry Pi
 
-- **`irrigacao.py`** é o "cérebro": lê os sensores, decide quando regar e controla a bomba. **As travas de segurança ficam aqui**, não no dashboard, então valem mesmo se o Node-RED cair.
-- **Node-RED** é só a interface: mostra os dados e envia comandos via MQTT.
-- **DHT22** é lido pelo driver do kernel (`dtoverlay=dht11,gpiopin=4`, que também atende o DHT22). Isso dispensa bibliotecas Python de bit-banging.
-- **ADS1115** é lido direto por `smbus2`, em single-shot, com ganho ±4,096 V e média de 4 amostras.
+O arquivo [`pi/irrigacao.py`](pi/irrigacao.py) executa a leitura dos sensores, a lógica de controle e as proteções da bomba. O projeto-base utiliza **Mosquitto/MQTT** para comunicar o programa com os fluxos do **Node-RED**.
 
-### Segurança da bomba
+Os parâmetros de referência documentados são: limiar de umidade **40%**, tempo de rega **10 segundos**, espera **30 segundos** e tempo máximo no manual **10 segundos**. Todos podem ser modificados após calibração.
 
-- A bomba **nunca liga sem água** no reservatório (boia), e desliga se a água acabar. A boia é verificada a cada 0,5 s e só muda de estado depois de **3 s estável**. Sem esse filtro, a água agitada pela própria bomba balançava o flutuador e cortava a bomba na partida.
-- **Modo manual:** a bomba desliga sozinha após `tempo_max_manual` segundos. Também desliga se a conexão MQTT cair.
-- **Modo automático:** quando o solo fica abaixo do `limiar`, a bomba rega por `tempo_rega` s e depois espera `tempo_espera` s para a água infiltrar antes de medir de novo.
-- Se o serviço parar ou travar, o GPIO27 é liberado e o **R2 de 10 kΩ** mantém a base do TIP122 em 0, ou seja, a bomba fica desligada.
+## Como Executar
 
-## MQTT
+### Parte 1 — Montagem e funcionamento local
 
-| Tópico | Direção | Conteúdo |
-|---|---|---|
-| `irrigacao/estado` | Pi → dashboard (retido, a cada ~2 s) | JSON com `solo_v`, `solo_pct`, `temp`, `umid_ar`, `tem_agua`, `bomba`, `motivo`, `erros`, `cfg`… |
-| `irrigacao/cmd` | dashboard → Pi | JSON com um ou mais comandos (abaixo) |
+1. Montar o circuito, conferir as ligações e avaliar a proteção da bomba.
+2. Copiar os arquivos de [`pi/`](pi/) para a Raspberry Pi, na pasta `~/irrigacao`.
+3. Executar `sudo bash ~/irrigacao/setup_root.sh`.
+4. Depois da reinicialização, executar `cd ~/irrigacao && python3 instalar_fluxo.py`.
+5. Acessar o Node-RED local pelo endereço da Raspberry Pi, na porta `1880/ui`.
 
-```jsonc
-{"modo": "auto"}                 // ou "manual"
-{"regar": true}                  // uma dose de tempo_rega s, em qualquer modo; bloqueado sem água
-{"bomba": true}                  // liga contínuo, só no manual, até tempo_max_manual; bloqueado sem água
-{"bomba": false}                 // para a bomba em qualquer modo
-{"limiar": 40}                   // % de umidade do solo para regar
-{"tempo_rega": 10, "tempo_espera": 30, "tempo_max_manual": 10}
-{"calibrar": "seco"}             // ou "molhado": grava a tensão atual do solo
-{"boia_fechada_tem_agua": true}  // inverte a lógica da boia
-```
+[**Documentação da Parte 1 — Montagem e controle local**](docs/parte_1_montagem_e_controle.md)
 
-Teste pelo terminal da Pi:
+### Parte 2 — Acesso online com Tailscale
 
-```bash
-mosquitto_sub -h localhost -t irrigacao/estado -C 1     # ver estado
-mosquitto_pub -h localhost -t irrigacao/cmd -m '{"modo":"manual"}'
-```
+1. Confirmar que o sistema local da Parte 1 está funcionando.
+2. Configurar autenticação do editor e do dashboard com `python3 ~/irrigacao/node_red_senha.py`.
+3. Reiniciar o Node-RED, conforme a documentação original.
+4. Configurar o acesso remoto com `sudo bash ~/irrigacao/setup_funnel.sh`.
+5. Testar o link HTTPS fornecido pelo Tailscale fora da rede local.
 
-A configuração fica salva em `~/irrigacao/config.json` (modelo em [`pi/config.example.json`](pi/config.example.json)).
+[**Documentação da Parte 2 — Acesso remoto com Tailscale**](docs/parte_2_acesso_online_tailscale.md)
 
-## Acesso pela internet (Tailscale Funnel)
+**Importante:** o Tailscale permite acessar o dashboard pela internet, mas o controlador de irrigação continua executando na Raspberry Pi. Proteja o editor e o painel com senha antes de expô-los externamente.
 
-O dashboard do Node-RED fica acessível de qualquer lugar, por HTTPS, num endereço fixo `https://irrigacao.<sua-rede>.ts.net/ui`. O [Tailscale Funnel](https://tailscale.com/kb/1223/funnel) é gratuito no plano *Personal* (uso não comercial). A Pi só abre uma conexão de **saída** até o Tailscale, então funciona atrás da rede da faculdade, sem IP público e sem abrir porta no roteador.
+## Arquivos do Repositório
 
-```mermaid
-flowchart LR
-    P["celular / PC<br/>em qualquer lugar"] -- "HTTPS<br/>irrigacao.&lt;rede&gt;.ts.net" --> T["Tailscale<br/>(nuvem)"] -- "túnel de saída" --> N["Node-RED :1880<br/>na Pi"]
-```
-
-**Antes de publicar, coloque senha no Node-RED.** Sem senha, qualquer pessoa com o link poderia abrir o editor e rodar comandos na Pi, por exemplo com o nó `exec`.
-
-| Onde | Usuário | Proteção |
-|---|---|---|
-| Editor (`/`) | `admin` | `adminAuth` (login do Node-RED) |
-| Dashboard (`/ui`) | `irrigacao` | `httpNodeAuth` (o navegador pede usuário e senha) |
-
-As travas da bomba (boia, tempo máximo) continuam no `irrigacao.py`, então valem também para quem usa o dashboard pela internet.
-
-### Passo a passo (na Pi)
-
-```bash
-# 1. senha no editor e no dashboard (só os hashes bcrypt ficam em ~/.node-red/irrigacao-auth.js)
-sudo apt install -y python3-bcrypt
-python3 ~/irrigacao/node_red_senha.py
-sudo systemctl restart nodered
-
-# 2. Tailscale + Funnel na porta 1880
-sudo bash ~/irrigacao/setup_funnel.sh
-```
-
-O `setup_funnel.sh`:
-1. instala o Tailscale;
-2. mostra um link para você entrar na sua conta (pode ser a do Google ou a do GitHub);
-3. liga o Funnel e imprime o endereço final.
-
-Na primeira vez, o Tailscale pede para ativar **HTTPS** e **Funnel** no painel web. O link aparece no terminal: ative e rode o script de novo. O Funnel continua ligado depois de reiniciar a Pi. Para desligar: `sudo tailscale funnel reset`.
-
-Com a senha ligada, o `instalar_fluxo.py` pede o usuário e a senha do editor. Também dá para passar por variáveis de ambiente: `NODERED_USER=admin NODERED_PASS=... python3 instalar_fluxo.py`.
-
-## Alternativa: Ubidots
-
-Para ver e controlar a irrigação de qualquer lugar, o Node-RED tem uma segunda aba, **Ubidots**, que faz uma ponte MQTT com o [Ubidots STEM](https://stem.ubidots.com). A Pi só abre uma conexão de **saída** (MQTT com TLS, `industrial.api.ubidots.com:8883`). Por isso funciona atrás da rede da faculdade, sem abrir porta e sem expor o Node-RED.
-
-```mermaid
-flowchart LR
-    S["irrigacao.py"] <--> M[("Mosquitto")] <--> N["Node-RED<br/>aba Ubidots"] <-- "MQTT/TLS 8883" --> U["Ubidots<br/>(dashboard na nuvem)"] <--> P["celular / PC<br/>em qualquer lugar"]
-```
-
-| Variável no Ubidots | Origem | Quando é enviada |
-|---|---|---|
-| `solo`, `temperatura`, `umidade_ar` | sensores | a cada 120 s |
-| `agua` (1 = tem água) | boia | quando muda |
-| `bomba` (1 = ligada) | bomba; o *context* traz o `motivo` | quando muda |
-| `modo_auto` (1 = automático) | modo | quando muda |
-
-`bomba` e `modo_auto` também são **comandos**. Um *Switch* do Ubidots ligado a elas muda o modo e liga ou desliga a bomba. No automático, ligar a bomba vira uma dose de rega (`{"regar": true}`); no manual, vira `{"bomba": true}`. As travas continuam no `irrigacao.py`: sem água a bomba não liga, e o *switch* volta para 0 sozinho em ~5 s. Nos primeiros 10 s após conectar, a ponte ignora o que vier do Ubidots, que nesse momento é só o último valor guardado e não um comando novo.
-
-O plano STEM aceita cerca de 4000 pontos por dia e 1 mensagem por segundo. Os 3 sensores a cada 120 s somam 2160 pontos por dia. O intervalo fica em `UB_INTERVALO`, no `pi/gerar_fluxo.py`.
-
-### Passo a passo
-
-1. **Conta:** crie uma conta em <https://stem.ubidots.com>. Em *My Profile → API Credentials*, copie o **Default token** (`BBUS-…`; é o *Token*, não a *API Key*).
-2. **Teste rápido do token** (de qualquer computador com `mosquitto-clients`). Deve aparecer um device `irrigacao` com a variável `teste` no Ubidots:
-   ```bash
-   mosquitto_pub -h industrial.api.ubidots.com -p 8883 --capath /etc/ssl/certs \
-     -u 'BBUS-SEU-TOKEN' -t /v1.6/devices/irrigacao -m '{"teste": 1}'
-   ```
-3. **Token na Pi** (o arquivo está no `.gitignore` e **não vai para o GitHub**):
-   ```bash
-   cp ~/irrigacao/ubidots.example.json ~/irrigacao/ubidots.json
-   nano ~/irrigacao/ubidots.json        # cole o token; "device" é o rótulo do device no Ubidots
-   chmod 600 ~/irrigacao/ubidots.json
-   ```
-4. **Instalar o fluxo:** copie `gerar_fluxo.py`, `fluxo_irrigacao.json` e `instalar_fluxo.py` para a Pi e rode `cd ~/irrigacao && python3 instalar_fluxo.py`. O script grava o token como credencial do nó MQTT e ativa a aba *Ubidots*. Sem `ubidots.json`, a aba fica desativada.
-5. **Conferir:** na aba *Ubidots* do editor, o nó *Prepara pontos* mostra o horário do último envio, e os nós MQTT devem aparecer como *connected*. No Ubidots, em *Devices → irrigacao*, as 6 variáveis aparecem depois do primeiro envio.
-6. **Dashboard no Ubidots:** ⚠️ o widget HTML Canvas exige plano pago; no STEM gratuito, use widgets nativos (Gauge, Line chart, Indicator, Switch).  `UBIDOTS_TOKEN=BBUS-... python3 ubidots/criar_dashboard.py` cria o device, as variáveis e o dashboard *Irrigação*, que é um widget HTML Canvas (`ubidots/painel.*`) parecido com o do Node-RED: medidores, bomba/reservatório/situação, modo automático, botões da bomba, histórico e diagnóstico. Rodar de novo atualiza o painel sem mudar o link. O plano STEM permite **1 dashboard** (apague o *Getting started* antes).
-7. **Compartilhar:** no dashboard, use *Share → Public link* para abrir no celular sem login. Atenção: um link público com *Switch* permite que qualquer pessoa com o link ligue a bomba. Para a apresentação, prefira entrar com a conta.
-
-## Calibração da umidade do solo
-
-A plaquinha entrega **tensão alta com o solo seco** e **baixa com o solo molhado**. O percentual é calculado linearmente entre as duas tensões de referência:
-
-| Referência | Tensão calibrada |
+| Arquivo / pasta | Descrição |
 |---|---|
-| Seco (forquilha seca, no ar) | 3,292 V → 0 % |
-| Molhado (forquilha na água) | 1,468 V → 100 % |
+| `README.md` | Apresentação acadêmica do projeto |
+| `pi/irrigacao.py` | Controle dos sensores, da bomba e comunicação MQTT |
+| `pi/fluxo_irrigacao.json` | Fluxo do dashboard Node-RED |
+| `pi/gerar_fluxo.py` | Gerador do fluxo Node-RED |
+| `pi/instalar_fluxo.py` | Instalador do fluxo |
+| `pi/setup_root.sh` | Configuração dos serviços na Raspberry Pi |
+| `pi/irrigacao.service` | Serviço systemd |
+| `pi/node_red_senha.py` | Autenticação do Node-RED |
+| `pi/setup_funnel.sh` | Configuração do Tailscale Funnel |
+| `ubidots/` | Integração opcional com Ubidots, preservada do repositório-base |
+| `sch.jpeg` | Esquemático original da equipe |
+| `docs/dashboard.jpg` | Imagem do dashboard original |
+| `docs/media/esquematico_unificado_sem_diodo.svg` | Esquema unificado representando a montagem relatada |
+| `docs/parte_1_montagem_e_controle.md` | Detalhes da Parte 1 |
+| `docs/parte_2_acesso_online_tailscale.md` | Detalhes da Parte 2 |
+| `docs/README_TECNICO_ORIGINAL.md` | Documentação técnica completa do projeto-base |
+| `lista_de_materiais.md` | Lista de componentes |
 
-O dashboard não tem botões de configuração. Para recalibrar, coloque a forquilha na condição desejada e rode na Pi:
+## Documentação Técnica e Créditos
 
-```bash
-mosquitto_pub -h localhost -t irrigacao/cmd -m '{"calibrar":"seco"}'     # forquilha seca/no ar
-mosquitto_pub -h localhost -t irrigacao/cmd -m '{"calibrar":"molhado"}'  # forquilha na água
-```
+A descrição detalhada de instalação, MQTT, calibração, Ubidots e diagnóstico foi preservada integralmente no [README técnico original](docs/README_TECNICO_ORIGINAL.md).
 
-O painel *Diagnóstico* mostra a tensão do A0 em tempo real.
-
-## Valores de controle
-
-| Parâmetro | Valor | Motivo |
-|---|---|---|
-| `limiar` | 40 % | terra seca lê ~10–30 %, recém-regada ~60–90 % |
-| `tempo_rega` | 10 s | dose de rega do automático (a AD20P bombeia até ~4 L/min: ≈ até 650 mL) |
-| `tempo_espera` | 30 s | pausa para a água infiltrar antes de medir de novo |
-| `tempo_max_manual` | 10 s | o botão "Ligar bomba" no manual também rega 10 s e desliga sozinho |
-
-Para mudar um valor: `mosquitto_pub -h localhost -t irrigacao/cmd -m '{"limiar": 45}'`.
-
-## Instalação do zero
-
-Testado em Raspberry Pi OS / Debian 13 (trixie), com Node-RED 5 e `node-red-dashboard` 3.6 já instalados.
-
-```bash
-# no notebook: copiar os arquivos
-ssh pi@10.33.133.22 'mkdir -p ~/irrigacao'
-scp pi/* pi@10.33.133.22:irrigacao/
-
-# na Pi: tudo que precisa de root (I2C, overlay do DHT22, mosquitto,
-# serviço systemd, Node-RED no boot, sudoers restrito). Reinicia no fim.
-sudo bash ~/irrigacao/setup_root.sh
-
-# na Pi, depois do reboot: instalar a aba "Irrigação" no Node-RED
-cd ~/irrigacao && python3 instalar_fluxo.py
-```
-
-Para o acesso pela internet, veja [Acesso pela internet (Tailscale Funnel)](#acesso-pela-internet-tailscale-funnel).
-
-`instalar_fluxo.py` usa a Admin API do Node-RED. Antes de alterar qualquer coisa ele salva um backup dos fluxos (`backup_flows_*.json`). Ele **desativa** (sem apagar) as abas antigas que usam `rpi-gpio`, porque uma delas usava o pino físico 3, que é o SDA do ADS1115.
-
-Para alterar o dashboard, edite `pi/gerar_fluxo.py`, rode `python3 pi/gerar_fluxo.py` para gerar `fluxo_irrigacao.json`, copie para a Pi e rode `instalar_fluxo.py` de novo.
-
-## Operação
-
-```bash
-sudo systemctl restart irrigacao     # sem senha (regra em /etc/sudoers.d/020_irrigacao)
-sudo systemctl restart nodered       # sem senha
-journalctl -u irrigacao -f           # log do serviço (bomba liga/desliga, comandos)
-/usr/sbin/i2cdetect -y 1             # deve mostrar 48
-cat /sys/bus/iio/devices/iio:device0/in_temp_input   # DHT22 em m°C
-pinctrl get 4,17,27                  # estado dos pinos
-```
-
-## Arquivos
-
-| Arquivo | Função |
-|---|---|
-| `pi/irrigacao.py` | serviço: sensores, controle, segurança, MQTT |
-| `pi/irrigacao.service` | unidade systemd (roda como `pi`) |
-| `pi/setup_root.sh` | configuração única com root |
-| `pi/node_red_senha.py` | liga a senha do editor e do dashboard do Node-RED |
-| `pi/setup_funnel.sh` | instala o Tailscale e publica o Node-RED na internet (Funnel) |
-| `pi/gerar_fluxo.py` | gera o fluxo do Node-RED (`fluxo_irrigacao.json`): abas Irrigação e Ubidots |
-| `pi/instalar_fluxo.py` | instala o fluxo via Admin API (com backup) |
-| `pi/config.example.json` | configuração de exemplo |
-| `ubidots/criar_dashboard.py`, `ubidots/painel.*` | cria o dashboard do Ubidots (widget HTML Canvas) pela API |
-| `pi/ubidots.example.json` | modelo do `ubidots.json` (token e device do Ubidots; o real fica fora do git) |
-| `sch.jpeg` | esquema elétrico |
-
-## Problemas encontrados na montagem (e diagnóstico)
-
-- **Nenhum sensor respondia:** o 3,3 V e/ou o GND não chegavam à placa. Pistas usadas: `i2cdetect` vazio, DHT22 com *timeout*, GPIO4 em 0 mesmo com o pull-up externo e a boia sempre em 1.
-- **A0 fixo em 0,004 V** enquanto A1–A3 (soltos) davam ~0,91 V: o fio do AO estava ligado, mas a plaquinha do solo estava sem alimentação.
-- **A0 travado em ~3,29 V** com a forquilha seca ou na água: havia uma trilha ligando um polo da forquilha ao VCC, o que prendia o AO no 3,3 V. A forquilha deve ir **só** aos 2 pinos de entrada da plaquinha. Depois de corrigir, a leitura passou a 1,47 V na água.
-- **DHT22 com erro intermitente:** na Pi 4, o driver do kernel falha em ~50 % das leituras, porque interrupções atrapalham a temporização de microssegundos. As leituras que passam são válidas (o checksum é conferido). O serviço respeita ≥ 2 s entre tentativas e só reporta erro após 30 s sem nenhuma leitura boa.
-- **A bomba era cortada na partida:** a boia oscilava por frações de segundo logo que o motor ligava (flutuador balançando com a água agitada e/ou ruído da partida). Resolvido com o filtro de 3 s. Se ainda houver ruído, dá para pôr um capacitor de 100 nF entre o GPIO17 e o GND e afastar o fio da boia dos fios da bomba.
-- Boia e forquilha **não têm polaridade**. A plaquinha do solo, o DHT22 e o ADS1115 **têm** (VCC/GND).
+**Repositório-base:** [marcusmmqm/irrigacao-raspberry-pi](https://github.com/marcusmmqm/irrigacao-raspberry-pi). O fork mantém o histórico e o reconhecimento do trabalho da equipe, com complementos de apresentação e documentação das duas partes.
