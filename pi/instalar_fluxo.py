@@ -3,12 +3,11 @@
 
 - faz backup dos fluxos atuais em ~/irrigacao/backup_flows_<data>.json
 - desativa as abas antigas que usam rpi-gpio (o pino físico 3 é o SDA do ADS1115)
-- substitui os nós com prefixo a1a1 (abas Irrigação e Ubidots) e faz deploy completo
-- Ubidots: lê token/device de ~/irrigacao/ubidots.json (sem ele, a aba fica desativada)
+- substitui os nós com prefixo a1a1 (somente aba Irrigação) e faz deploy completo
+- remove do Node-RED qualquer nó legado do projeto que use o mesmo prefixo
 """
 import json
 import os
-import re
 import sys
 import time
 import urllib.error
@@ -60,27 +59,6 @@ print("backup:", bkp)
 
 with open(os.path.join(BASE, "fluxo_irrigacao.json")) as f:
     novos = json.load(f)
-
-# Ubidots: token e device vêm de ubidots.json (fora do git). Sem ele, a aba fica desativada.
-TAB_UB = PREFIXO + "000000000002"
-ub = {}
-try:
-    with open(os.path.join(BASE, "ubidots.json")) as f:
-        ub = json.load(f)
-except FileNotFoundError:
-    pass
-token = str(ub.get("token", "")).strip()
-device = str(ub.get("device", "irrigacao")).strip().lower()
-if token and not re.fullmatch(r"[a-z0-9_-]{1,50}", device):
-    sys.exit(f"ubidots.json: device {device!r} inválido (use letras minúsculas, números, _ ou -)")
-novos = json.loads(json.dumps(novos).replace("__UBIDOTS_DEVICE__", device))
-for n in novos:
-    if n["id"] == TAB_UB:
-        n["disabled"] = not token
-    if n["type"] == "mqtt-broker" and n.get("name") == "Ubidots" and token:
-        n["credentials"] = {"user": token, "password": ""}
-print(f"Ubidots: device '{device}'" if token else
-      "Ubidots: sem ubidots.json com token -> aba 'Ubidots' desativada")
 
 # abas que contêm nós de GPIO da aula -> desativar (não apaga nada)
 abas_gpio = {n["z"] for n in flows if n.get("type", "").startswith("rpi-gpio") and n.get("z")}
