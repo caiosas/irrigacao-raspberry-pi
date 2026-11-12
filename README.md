@@ -1,16 +1,10 @@
 # Sistema de Irrigação Automatizada com Raspberry Pi 4
 
-## ▶️ Assista ao projeto funcionando
+## Vídeo de demonstração
 
-[![Clique na imagem para assistir ao vídeo completo da irrigação automatizada](docs/media/painel_notebook.jpg)](https://github.com/caiosas/irrigacao-raspberry-pi/releases/download/demonstracao-irrigacao-v1/demonstracao_completa.mp4)
+[![Prévia do vídeo do sistema de irrigação](docs/media/painel_notebook.jpg)](https://github.com/caiosas/irrigacao-raspberry-pi/releases/download/demonstracao-irrigacao-v1/demonstracao_completa.mp4)
 
-### [▶ ASSISTIR AO VÍDEO ORIGINAL COMPLETO — 4 MIN 13 S](https://github.com/caiosas/irrigacao-raspberry-pi/releases/download/demonstracao-irrigacao-v1/demonstracao_completa.mp4)
-
-**[▶ Assistir diretamente no repositório (MP4 compacto)](demonstracao.mp4)** · **[Ver a demonstração no GitHub Releases](https://github.com/caiosas/irrigacao-raspberry-pi/releases/tag/demonstracao-irrigacao-v1)**
-
-Vídeo com a montagem do circuito, o painel em funcionamento e o acesso remoto pelo Tailscale no notebook e no celular.
-
----
+**[▶ Assistir ao vídeo completo (MP4 — 4 min 13 s)](https://github.com/caiosas/irrigacao-raspberry-pi/releases/download/demonstracao-irrigacao-v1/demonstracao_completa.mp4)**
 
 ## Integrantes
 
@@ -39,16 +33,6 @@ A estrutura prevista para aplicação é uma **torre vertical de cultivo**, form
 ![Torre vertical de cultivo utilizada como referência do projeto](docs/media/torre_vertical_aplicacao.png)
 
 *Estrutura vertical de cultivo apresentada pela equipe (fotografia original, sem edições).*
-
-## Vídeo de Demonstração
-
-O vídeo completo mostra a montagem, o funcionamento do sistema e a interface acessada remotamente. As três gravações foram reunidas na sequência original, com duração de **4 min 13 s** e áudio preservado.
-
-- [**Vídeo original completo — MP4**](https://github.com/caiosas/irrigacao-raspberry-pi/releases/download/demonstracao-irrigacao-v1/demonstracao_completa.mp4) — 4 min 13 s, 33,7 MB, com áudio; publicado no GitHub Releases e validado por SHA-256.
-- [**Versão compacta do vídeo (na raiz do repositório)**](demonstracao.mp4) — mantém toda a sequência, com qualidade de imagem e áudio reduzida para acesso mais leve.
-- [**Arquivos de preservação do original**](docs/media/video_original_partes/README.md) — cópia exata dividida em 19 partes, com script para reconstruí-la e conferência de integridade.
-
-O vídeo de 33,7 MB foi reconstruído e publicado automaticamente pelo GitHub Actions. A versão original e a cópia segmentada têm o mesmo conteúdo.
 
 ## Funcionamento Geral
 
@@ -175,11 +159,6 @@ Os parâmetros de referência documentados são: limiar de umidade **40%**, temp
 | `docs/media/torre_vertical_aplicacao.png` | Foto original da torre de cultivo |
 | `docs/media/circuito_raspberry_pi.jpg` | Registro da montagem da Raspberry Pi |
 | `docs/media/painel_notebook.jpg`, `painel_celular.jpg` | Registros da interface usada na Parte 2 |
-| `demonstracao.mp4` | Versão compacta de acesso rápido ao vídeo, na pasta principal |
-| `docs/media/demonstracao_compacta.mp4` | Cópia da demonstração compacta, com áudio |
-| `docs/media/video_original_partes/` | Vídeo original, preservado sem recompressão em 19 partes |
-| `docs/media/reconstruir_video.py` | Script que recompõe e valida o MP4 original |
-| `.github/workflows/publicar_video.yml` | Automação executada com sucesso para publicar o MP4 original no GitHub Releases |
 | `docs/parte_1_montagem_e_controle.md` | Detalhes da Parte 1 |
 | `docs/parte_2_acesso_online_tailscale.md` | Detalhes da Parte 2 |
 | `docs/guia_tecnico.md` | Guia técnico da implementação local e do acesso via Tailscale |
