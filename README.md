@@ -15,6 +15,8 @@ O trabalho é dividido em **duas partes**, utilizando a mesma montagem e o códi
 
 O projeto utiliza o código completo da equipe, a partir do [repositório original de Marcus Miyamoto](https://github.com/marcusmmqm/irrigacao-raspberry-pi). Este repositório é um **fork** e preserva o histórico do trabalho e os arquivos existentes.
 
+**Tecnologia efetivamente utilizada para acesso remoto: Tailscale Funnel.** A plataforma Ubidots aparece em arquivos herdados do repositório original, mas **não foi utilizada no projeto apresentado**, nem na primeira nem na segunda parte.
+
 ## Aplicação do Sistema
 
 A estrutura prevista para aplicação é uma **torre vertical de cultivo**, formada por um tubo com diversas posições de plantio. A automação pretende auxiliar o acompanhamento e acionamento da irrigação dessa estrutura.
@@ -124,7 +126,7 @@ Os parâmetros de referência documentados são: limiar de umidade **40%**, temp
 | `pi/irrigacao.service` | Serviço systemd |
 | `pi/node_red_senha.py` | Autenticação do Node-RED |
 | `pi/setup_funnel.sh` | Configuração do Tailscale Funnel |
-| `ubidots/` | Integração opcional com Ubidots, preservada do repositório-base |
+| `ubidots/` | Arquivos legados do repositório-base — **não utilizados neste projeto** |
 | `sch.jpeg` | Esquemático original da equipe |
 | `docs/dashboard.jpg` | Imagem do dashboard original |
 | `docs/media/esquematico_unificado_sem_diodo.svg` | Esquema unificado representando a montagem relatada |
@@ -135,6 +137,6 @@ Os parâmetros de referência documentados são: limiar de umidade **40%**, temp
 
 ## Documentação Técnica e Créditos
 
-A descrição detalhada de instalação, MQTT, calibração, Ubidots e diagnóstico foi preservada integralmente no [README técnico original](docs/README_TECNICO_ORIGINAL.md).
+A descrição detalhada de instalação, MQTT, calibração e diagnóstico foi preservada integralmente no [README técnico original](docs/README_TECNICO_ORIGINAL.md). Esse documento é um registro do projeto-base e contém referências à alternativa Ubidots, **que não foi implementada nem utilizada pela nossa equipe**.
 
 **Repositório-base:** [marcusmmqm/irrigacao-raspberry-pi](https://github.com/marcusmmqm/irrigacao-raspberry-pi). O fork mantém o histórico e o reconhecimento do trabalho da equipe, com complementos de apresentação e documentação das duas partes.
