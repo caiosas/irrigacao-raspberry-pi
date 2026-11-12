@@ -45,7 +45,7 @@ cd ~/irrigacao
 python3 instalar_fluxo.py
 ```
 
-Na rede local, abra `http://<IP_DA_RASPBERRY>:1880/ui`. A configuração completa do sistema, os comandos de diagnóstico, a calibração da sonda e os detalhes de segurança estão no [README técnico original preservado](README_TECNICO_ORIGINAL.md).
+Na rede local, abra `http://<IP_DA_RASPBERRY>:1880/ui`. A configuração completa do sistema, os comandos de diagnóstico, a calibração da sonda e os detalhes de segurança estão no [README técnico original preservado](guia_tecnico.md).
 
 ## Aplicação física
 
