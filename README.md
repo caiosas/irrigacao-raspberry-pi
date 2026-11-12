@@ -29,11 +29,11 @@ A estrutura prevista para aplicação é uma **torre vertical de cultivo**, form
 
 O vídeo completo mostra a montagem, o funcionamento do sistema e a interface acessada remotamente. As três gravações foram reunidas na sequência original, com duração de **4 min 13 s** e áudio preservado.
 
-- [**Assistir à versão compacta do vídeo completo**](docs/media/demonstracao_compacta.mp4) — MP4 leve para visualização pelo GitHub; imagem e áudio comprimidos para facilitar o acesso.
-- [**Obter o MP4 original, sem recompressão**](docs/media/video_original_partes/README.md) — a gravação integral foi preservada em 19 partes binárias, com verificação SHA-256 e script de reconstrução.
-- [**Ver os lançamentos do projeto**](https://github.com/caiosas/irrigacao-raspberry-pi/releases) — a automação de publicação pode disponibilizar o MP4 original como um único arquivo, quando o GitHub Actions estiver habilitado.
+- [**Vídeo original completo — MP4**](https://github.com/caiosas/irrigacao-raspberry-pi/releases/download/demonstracao-irrigacao-v1/demonstracao_completa.mp4) — 4 min 13 s, 33,7 MB, com áudio; publicado no GitHub Releases e validado por SHA-256.
+- [**Versão compacta do vídeo**](docs/media/demonstracao_compacta.mp4) — mantém toda a sequência, com qualidade de imagem e áudio reduzida para acesso mais leve.
+- [**Arquivos de preservação do original**](docs/media/video_original_partes/README.md) — cópia exata dividida em 19 partes, com script para reconstruí-la e conferência de integridade.
 
-A versão compacta não substitui o original. O arquivo de alta qualidade foi dividido somente para permitir sua transferência ao repositório.
+O vídeo de 33,7 MB foi reconstruído e publicado automaticamente pelo GitHub Actions. A versão original e a cópia segmentada têm o mesmo conteúdo.
 
 ## Funcionamento Geral
 
@@ -161,7 +161,7 @@ Os parâmetros de referência documentados são: limiar de umidade **40%**, temp
 | `docs/media/demonstracao_compacta.mp4` | Vídeo completo em versão compacta, com áudio |
 | `docs/media/video_original_partes/` | Vídeo original, preservado sem recompressão em 19 partes |
 | `docs/media/reconstruir_video.py` | Script que recompõe e valida o MP4 original |
-| `.github/workflows/publicar_video.yml` | Automação opcional para publicar o MP4 original como release |
+| `.github/workflows/publicar_video.yml` | Automação executada com sucesso para publicar o MP4 original no GitHub Releases |
 | `docs/parte_1_montagem_e_controle.md` | Detalhes da Parte 1 |
 | `docs/parte_2_acesso_online_tailscale.md` | Detalhes da Parte 2 |
 | `docs/README_TECNICO_ORIGINAL.md` | Documentação técnica completa do projeto-base |
