@@ -49,4 +49,12 @@ Na rede local, abra `http://<IP_DA_RASPBERRY>:1880/ui`. A configuração complet
 
 ## Aplicação física
 
-A estrutura escolhida como aplicação é uma torre vertical de cultivo, com pontos de plantio ao longo do tubo. A fotografia original fornecida pela equipe faz parte do pacote de mídias entregue separadamente, para publicação sem modificações na imagem.
+A estrutura escolhida como aplicação é uma torre vertical de cultivo, com pontos de plantio ao longo do tubo. A fotografia original fornecida pela equipe está disponível no repositório, **sem modificações**:
+
+![Torre de cultivo](media/torre_vertical_aplicacao.png)
+
+### Registro da montagem
+
+![Montagem da Raspberry Pi](media/circuito_raspberry_pi.jpg)
+
+Veja também o [vídeo demonstrativo em versão compacta](media/demonstracao_compacta.mp4) e o [arquivo original sem recompressão](media/video_original_partes/README.md).
