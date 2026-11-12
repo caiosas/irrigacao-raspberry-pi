@@ -47,5 +47,15 @@ O endereço do dashboard terá o padrão `https://irrigacao.<sua-rede>.ts.net/ui
 
 **Somente o Tailscale Funnel foi utilizado para disponibilizar o painel online nesta segunda etapa.** Os arquivos `ubidots/` e as referências a Ubidots existentes no código e na documentação herdados são materiais do repositório original, não fazem parte da implementação apresentada pela equipe.
 
+## Demonstração do acesso remoto
+
+Os registros abaixo mostram o painel usado nesta segunda etapa no notebook e no celular, com acesso remoto por Tailscale.
+
+![Painel no notebook](media/painel_notebook.jpg)
+
+![Painel no celular](media/painel_celular.jpg)
+
+[Assistir à demonstração completa em versão compacta](media/demonstracao_compacta.mp4) · [Obter o vídeo original preservado](media/video_original_partes/README.md)
+
 
 Para os detalhes técnicos de instalação e manutenção, veja o [README técnico original](README_TECNICO_ORIGINAL.md).
