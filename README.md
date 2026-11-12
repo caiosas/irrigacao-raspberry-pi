@@ -14,7 +14,10 @@ Vídeo com a montagem do circuito, o painel em funcionamento e o acesso remoto p
 
 ## Integrantes
 
-Caio Almeida - 23.00188-7 Enzo Arigoni - 22.01293-0 Marcus Miyamoto - 23.01288-9 Luiz Antônio Kastrupp - 23.01176-9
+- Caio Almeida — 23.00188-7
+- Enzo Arigoni — 22.01293-0
+- Marcus Miyamoto — 23.01288-9
+- Luiz Antônio Kastrupp — 23.01176-9
 
 ## Descrição do Projeto
 
