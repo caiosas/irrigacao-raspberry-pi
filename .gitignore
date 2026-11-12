@@ -2,5 +2,9 @@ __pycache__/
 *.pyc
 .venv/
 backup_flows_*.json
-pi/config.json
-pi/ubidots.json
+
+# Configurações locais e credenciais não devem ser publicadas.
+# Exceções: o modelo de configuração e o fluxo oficial versionado.
+pi/*.json
+!pi/config.example.json
+!pi/fluxo_irrigacao.json
