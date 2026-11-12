@@ -20,7 +20,7 @@ Esta é a **primeira parte** do projeto, dedicada à montagem física, às conex
 
 A Raspberry Pi é alimentada pela fonte USB-C. A bomba recebe 12 V de fonte separada e ambas compartilham referência de GND. O TIP122 utiliza **R1 de 330 Ω** na base e **R2 de 10 kΩ** da base ao GND; o DHT22 utiliza **R3 de 4,7 kΩ** como pull-up e **C1 de 100 nF** entre alimentação e GND, perto do sensor.
 
-Veja o [diagrama unificado de conexão sem diodo](media/esquematico_unificado_sem_diodo.svg), preparado para documentar a montagem informada pela equipe. O desenho original do repositório-base é preservado em [`sch.jpeg`](../sch.jpeg).
+Veja o [diagrama unificado de conexão sem diodo](media/esquematico_unificado_sem_diodo.svg), preparado para documentar a montagem informada pela equipe. O arquivo anterior de desenho, que mostrava um diodo não instalado, permanece acessível no histórico do repositório original, mas não integra esta versão.
 
 > **Segurança:** o grupo informou que não montou o diodo em paralelo com a bomba. Isso documenta a montagem, **não é uma recomendação elétrica**. Um motor/carga indutiva pode gerar surtos capazes de danificar o transistor. Antes de energizar, avaliar proteção adequada, corrente de partida e aquecimento do TIP122.
 

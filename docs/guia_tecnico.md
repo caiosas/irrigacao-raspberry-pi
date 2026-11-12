@@ -24,7 +24,7 @@ Sistema de irrigação para a disciplina de microcontroladores. A Raspberry Pi 4
 
 ## Hardware
 
-O esquema original está em [`sch.jpeg`](../sch.jpeg) e o esquema da montagem relatada em [media/esquematico_unificado_sem_diodo.svg](media/esquematico_unificado_sem_diodo.svg). Ele usa duas fontes (USB-C da Pi + 12 V da bomba), não tem conversor buck e todos os GNDs são comuns.
+O esquema da montagem relatada está em [media/esquematico_unificado_sem_diodo.svg](media/esquematico_unificado_sem_diodo.svg). Ele usa duas fontes (USB-C da Pi + 12 V da bomba), não tem conversor buck e todos os GNDs são comuns.
 
 | Componente | Ligação na Pi (pino **físico**) | Observação |
 |---|---|---|
@@ -209,7 +209,7 @@ pinctrl get 4,17,27                  # estado dos pinos
 | `pi/setup_funnel.sh` | instala o Tailscale e publica o Node-RED na internet (Funnel) |
 | `pi/instalar_fluxo.py` | instala o fluxo via Admin API (com backup) |
 | `pi/config.example.json` | configuração de exemplo |
-| `sch.jpeg` | esquema elétrico |
+| `docs/media/esquematico_unificado_sem_diodo.svg` | esquema de conexões da montagem relatada |
 
 ## Problemas encontrados na montagem (e diagnóstico)
 

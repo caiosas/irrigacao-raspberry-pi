@@ -84,9 +84,9 @@ A Raspberry Pi é alimentada por USB-C e a bomba por uma fonte separada de 12 V;
 
 ![Esquemático unificado do sistema sem diodo](docs/media/esquematico_unificado_sem_diodo.svg)
 
-[Visualizar o esquema unificado em SVG](docs/media/esquematico_unificado_sem_diodo.svg) · [Baixar a imagem em PNG](docs/media/esquematico_unificado_sem_diodo.png) · [Ver o esquema original do grupo](sch.jpeg)
+[Visualizar o esquema unificado em SVG](docs/media/esquematico_unificado_sem_diodo.svg) · [Baixar a imagem em PNG](docs/media/esquematico_unificado_sem_diodo.png)
 
-**Observação:** a montagem relatada **não usou o diodo de proteção** que aparece no desenho original. O esquema unificado documenta essa informação, mas **não valida a segurança do circuito**. Uma bomba/motor pode causar surtos de tensão no desligamento; é importante definir proteção adequada e verificar a corrente e o aquecimento do TIP122 antes de energizar.
+**Observação:** o esquema documenta a montagem relatada pela equipe, que **não utilizou diodo de proteção**. Isso **não valida a segurança do circuito**. Uma bomba/motor pode causar surtos de tensão no desligamento; é importante definir proteção adequada e verificar a corrente e o aquecimento do TIP122 antes de energizar.
 
 ## Interface de Monitoramento
 
@@ -152,7 +152,6 @@ Os parâmetros de referência documentados são: limiar de umidade **40%**, temp
 | `pi/irrigacao.service` | Serviço systemd |
 | `pi/node_red_senha.py` | Autenticação do Node-RED |
 | `pi/setup_funnel.sh` | Configuração do Tailscale Funnel |
-| `sch.jpeg` | Esquemático original da equipe |
 | `docs/dashboard.jpg` | Imagem do dashboard original |
 | `docs/media/esquematico_unificado_sem_diodo.svg` | Esquema unificado representando a montagem relatada |
 | `docs/media/esquematico_unificado_sem_diodo.png` | Versão PNG do esquemático |
