@@ -2,7 +2,7 @@
 
 ## Integrantes
 
-Projeto desenvolvido em grupo para a disciplina de Microcontroladores. Os nomes e registros acadêmicos podem ser acrescentados quando a lista oficial da equipe estiver confirmada.
+Caio Almeida - 23.00188-7 Enzo Arigoni - 22.01293-0 Marcus Miyamoto - 23.01288-9 Luiz Antônio Kastrupp - 23.01176-9
 
 ## Descrição do Projeto
 
