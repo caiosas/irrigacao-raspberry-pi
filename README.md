@@ -21,7 +21,19 @@ O projeto utiliza o código completo da equipe, a partir do [repositório origin
 
 A estrutura prevista para aplicação é uma **torre vertical de cultivo**, formada por um tubo com diversas posições de plantio. A automação pretende auxiliar o acompanhamento e acionamento da irrigação dessa estrutura.
 
-A fotografia da torre enviada pela equipe e os vídeos de demonstração fazem parte do conjunto de mídias preparado para este projeto. As mídias binárias ainda precisam ser incorporadas ao repositório, sem alterar o conteúdo original.
+![Torre vertical de cultivo utilizada como referência do projeto](docs/media/torre_vertical_aplicacao.png)
+
+*Estrutura vertical de cultivo apresentada pela equipe (fotografia original, sem edições).*
+
+## Vídeo de Demonstração
+
+O vídeo completo mostra a montagem, o funcionamento do sistema e a interface acessada remotamente. As três gravações foram reunidas na sequência original, com duração de **4 min 13 s** e áudio preservado.
+
+- [**Assistir à versão compacta do vídeo completo**](docs/media/demonstracao_compacta.mp4) — MP4 leve para visualização pelo GitHub; imagem e áudio comprimidos para facilitar o acesso.
+- [**Obter o MP4 original, sem recompressão**](docs/media/video_original_partes/README.md) — a gravação integral foi preservada em 19 partes binárias, com verificação SHA-256 e script de reconstrução.
+- [**Ver os lançamentos do projeto**](https://github.com/caiosas/irrigacao-raspberry-pi/releases) — a automação de publicação pode disponibilizar o MP4 original como um único arquivo, quando o GitHub Actions estiver habilitado.
+
+A versão compacta não substitui o original. O arquivo de alta qualidade foi dividido somente para permitir sua transferência ao repositório.
 
 ## Funcionamento Geral
 
@@ -73,7 +85,7 @@ A Raspberry Pi é alimentada por USB-C e a bomba por uma fonte separada de 12 V;
 
 ![Esquemático unificado do sistema sem diodo](docs/media/esquematico_unificado_sem_diodo.svg)
 
-[Visualizar o esquema unificado em SVG](docs/media/esquematico_unificado_sem_diodo.svg) · [Ver o esquema original do grupo](sch.jpeg)
+[Visualizar o esquema unificado em SVG](docs/media/esquematico_unificado_sem_diodo.svg) · [Baixar a imagem em PNG](docs/media/esquematico_unificado_sem_diodo.png) · [Ver o esquema original do grupo](sch.jpeg)
 
 **Observação:** a montagem relatada **não usou o diodo de proteção** que aparece no desenho original. O esquema unificado documenta essa informação, mas **não valida a segurança do circuito**. Uma bomba/motor pode causar surtos de tensão no desligamento; é importante definir proteção adequada e verificar a corrente e o aquecimento do TIP122 antes de energizar.
 
@@ -82,6 +94,18 @@ A Raspberry Pi é alimentada por USB-C e a bomba por uma fonte separada de 12 V;
 O dashboard do Node-RED exibe as medições dos sensores, a situação do reservatório, o estado da bomba e as opções de controle.
 
 ![Painel de irrigação do projeto-base](docs/dashboard.jpg)
+
+### Registros das duas etapas
+
+**Parte 1 — Montagem e funcionamento na Raspberry Pi**
+
+![Circuito físico da Raspberry Pi](docs/media/circuito_raspberry_pi.jpg)
+
+**Parte 2 — Interface online pelo Tailscale**
+
+![Dashboard acessado no notebook](docs/media/painel_notebook.jpg)
+
+![Dashboard acessado no celular](docs/media/painel_celular.jpg)
 
 ## Código da Raspberry Pi
 
@@ -130,6 +154,14 @@ Os parâmetros de referência documentados são: limiar de umidade **40%**, temp
 | `sch.jpeg` | Esquemático original da equipe |
 | `docs/dashboard.jpg` | Imagem do dashboard original |
 | `docs/media/esquematico_unificado_sem_diodo.svg` | Esquema unificado representando a montagem relatada |
+| `docs/media/esquematico_unificado_sem_diodo.png` | Versão PNG do esquemático |
+| `docs/media/torre_vertical_aplicacao.png` | Foto original da torre de cultivo |
+| `docs/media/circuito_raspberry_pi.jpg` | Registro da montagem da Raspberry Pi |
+| `docs/media/painel_notebook.jpg`, `painel_celular.jpg` | Registros da interface usada na Parte 2 |
+| `docs/media/demonstracao_compacta.mp4` | Vídeo completo em versão compacta, com áudio |
+| `docs/media/video_original_partes/` | Vídeo original, preservado sem recompressão em 19 partes |
+| `docs/media/reconstruir_video.py` | Script que recompõe e valida o MP4 original |
+| `.github/workflows/publicar_video.yml` | Automação opcional para publicar o MP4 original como release |
 | `docs/parte_1_montagem_e_controle.md` | Detalhes da Parte 1 |
 | `docs/parte_2_acesso_online_tailscale.md` | Detalhes da Parte 2 |
 | `docs/README_TECNICO_ORIGINAL.md` | Documentação técnica completa do projeto-base |
