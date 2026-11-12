@@ -43,8 +43,9 @@ O endereço do dashboard terá o padrão `https://irrigacao.<sua-rede>.ts.net/ui
 - Não publique tokens, senhas, chaves SSH ou configurações privadas neste repositório.
 - As verificações de nível de água e limites de acionamento devem continuar funcionando independentemente de acesso remoto.
 
-## Alternativa presente no código
+## Tecnologia efetivamente utilizada
 
-A integração com **Ubidots** também foi desenvolvida no projeto-base e permanece preservada na pasta `ubidots/`. Entretanto, **a Parte 2 apresentada neste trabalho usa Tailscale** como solução de acesso externo ao mesmo painel Node-RED.
+**Somente o Tailscale Funnel foi utilizado para disponibilizar o painel online nesta segunda etapa.** Os arquivos `ubidots/` e as referências a Ubidots existentes no código e na documentação herdados são materiais do repositório original, não fazem parte da implementação apresentada pela equipe.
+
 
 Para os detalhes técnicos de instalação e manutenção, veja o [README técnico original](README_TECNICO_ORIGINAL.md).
