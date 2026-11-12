@@ -55,7 +55,7 @@ Os registros abaixo mostram o painel usado nesta segunda etapa no notebook e no 
 
 ![Painel no celular](media/painel_celular.jpg)
 
-[Assistir à demonstração completa em versão compacta](media/demonstracao_compacta.mp4) · [Obter o vídeo original preservado](media/video_original_partes/README.md)
+[Assistir ao vídeo original completo](https://github.com/caiosas/irrigacao-raspberry-pi/releases/download/demonstracao-irrigacao-v1/demonstracao_completa.mp4) · [Versão compacta](media/demonstracao_compacta.mp4)
 
 
 Para os detalhes técnicos de instalação e manutenção, veja o [README técnico original](README_TECNICO_ORIGINAL.md).
