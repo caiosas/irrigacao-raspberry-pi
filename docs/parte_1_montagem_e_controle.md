@@ -57,4 +57,4 @@ A estrutura escolhida como aplicação é uma torre vertical de cultivo, com pon
 
 ![Montagem da Raspberry Pi](media/circuito_raspberry_pi.jpg)
 
-Veja também o [vídeo demonstrativo em versão compacta](media/demonstracao_compacta.mp4) e o [arquivo original sem recompressão](media/video_original_partes/README.md).
+Veja também o [vídeo original completo](https://github.com/caiosas/irrigacao-raspberry-pi/releases/download/demonstracao-irrigacao-v1/demonstracao_completa.mp4), a [versão compacta](media/demonstracao_compacta.mp4) e os [arquivos de preservação](media/video_original_partes/README.md).
