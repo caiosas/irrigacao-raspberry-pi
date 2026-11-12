@@ -43,19 +43,9 @@ O endereço do dashboard terá o padrão `https://irrigacao.<sua-rede>.ts.net/ui
 - Não publique tokens, senhas, chaves SSH ou configurações privadas neste repositório.
 - As verificações de nível de água e limites de acionamento devem continuar funcionando independentemente de acesso remoto.
 
-## Tecnologia efetivamente utilizada
+## Tecnologia de acesso remoto
 
-**Somente o Tailscale Funnel foi utilizado para disponibilizar o painel online nesta segunda etapa.** Os arquivos `ubidots/` e as referências a Ubidots existentes no código e na documentação herdados são materiais do repositório original, não fazem parte da implementação apresentada pela equipe.
-
-## Demonstração do acesso remoto
-
-Os registros abaixo mostram o painel usado nesta segunda etapa no notebook e no celular, com acesso remoto por Tailscale.
-
-![Painel no notebook](media/painel_notebook.jpg)
-
-![Painel no celular](media/painel_celular.jpg)
-
-[Assistir ao vídeo original completo](https://github.com/caiosas/irrigacao-raspberry-pi/releases/download/demonstracao-irrigacao-v1/demonstracao_completa.mp4) · [Versão compacta](media/demonstracao_compacta.mp4)
+O acesso externo ao painel é realizado pelo Tailscale Funnel. O controlador, o broker MQTT e o Node-RED permanecem na Raspberry Pi.
 
 
-Para os detalhes técnicos de instalação e manutenção, veja o [README técnico original](README_TECNICO_ORIGINAL.md).
+Para os detalhes técnicos de instalação e manutenção, veja o [README técnico original](guia_tecnico.md).
